@@ -4,7 +4,7 @@ Building macOS binaries
 ✓ _This binary should be reproducible, meaning you should be able to generate
    binaries that match the official releases._
 
-This guide explains how to build Electrum binaries for macOS systems.
+This guide explains how to build the Electrum-Dime binaries for macOS systems.
 
 
 ## Building the binary
@@ -81,7 +81,7 @@ Install [`brew`](https://brew.sh/).
 Let brew install the Xcode CLI tools.
 
 
-#### 2. Build Electrum
+#### 2. Build Electrum-Dime
 
     cd electrum
     ./contrib/osx/make_osx.sh

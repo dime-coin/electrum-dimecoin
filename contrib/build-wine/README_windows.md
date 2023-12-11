@@ -1,4 +1,4 @@
-# Running Electrum from source on Windows (development version)
+# Running Electrum-Dime from source on Windows (development version)
 
 ## Prerequisites
 
@@ -9,7 +9,7 @@
 
 ### 1. Check out the code from GitHub:
 ```
-> git clone https://github.com/spesmilo/electrum.git
+> git clone https://github.com/dime-coin/electrum-dimecoin.git
 > cd electrum
 > git submodule update --init
 ```

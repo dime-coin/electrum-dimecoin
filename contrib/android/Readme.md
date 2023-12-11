@@ -1,9 +1,7 @@
 # Qml GUI
 
-The Qml GUI is used with Electrum on Android devices, since Electrum 4.4.
+The Qml GUI is used with Electrum-Dime on Android devices.
 To generate an APK file, follow these instructions.
-
-(note: older versions of Electrum for Android used the "kivy" GUI)
 
 ## Android binary with Docker
 

@@ -35,7 +35,7 @@ similar system.
 Electrum Windows builds are signed with a Microsoft Authenticode™ code signing
 certificate in addition to the GPG-based signatures.
 
-The advantage of using Authenticode is that Electrum users won't receive a
+The advantage of using Authenticode is that Electrum-Dime users won't receive a
 Windows SmartScreen warning when starting it.
 
 The release signing procedure involves a signer (the holder of the

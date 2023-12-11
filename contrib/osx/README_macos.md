@@ -1,4 +1,4 @@
-# Running Electrum from source on macOS (development version)
+# Running Electrum-Dime from source on macOS (development version)
 
 ## Prerequisites
 
@@ -10,7 +10,7 @@
 
 ### 1. Check out the code from GitHub:
 ```
-$ git clone https://github.com/spesmilo/electrum.git
+$ git clone https://github.com/dime-coin/electrum-dimecoin.git
 $ cd electrum
 $ git submodule update --init
 ```
@@ -42,7 +42,7 @@ $ echo 'export PATH="/opt/homebrew/opt/pyqt@5/5.15.4_1/bin:$PATH"' >> ~/.zshrc
 $ source ~/.zshrc
 ```
 
-### 4. Run electrum:
+### 4. Run Electrum-Dime:
 ```
 $ ./run_electrum
 ```

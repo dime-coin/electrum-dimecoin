@@ -127,7 +127,7 @@ Any help testing the software, reporting or fixing bugs, reviewing pull requests
 and recent changes, writing tests, or helping with outstanding issues is very welcome.
 Implementing new features, or improving/refactoring the codebase, is of course
 also welcome, but to avoid wasted effort, especially for larger changes,
-we encourage discussing these on the issue tracker or IRC first.
+we encourage discussing these on the issue tracker or Telegram first.
 
 Besides [GitHub](https://github.com/dime-coin/electrum-dimecoin),
 most communication about Electrum-Dime development happens on [Telegram](https://t.me/Dimecoin/1), in the `General` channel. 
