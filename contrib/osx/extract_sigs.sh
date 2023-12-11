@@ -1,5 +1,6 @@
 #!/bin/sh
 # Copyright (c) 2014-2019 The Bitcoin Core developers
+# Copyright (C) 2018-2024 Dimecoin Developers
 # Distributed under the MIT software license, see the accompanying
 # file COPYING or http://www.opensource.org/licenses/mit-license.php.
 #

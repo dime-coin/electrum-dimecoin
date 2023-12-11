@@ -1,4 +1,5 @@
 # Copyright (c) 2019 Calin Culianu <calin.culianu@gmail.com>
+# Copyright (C) 2018-2024 Dimecoin Developers
 # Distributed under the MIT software license, see the accompanying
 # file LICENCE or http://www.opensource.org/licenses/mit-license.php
 
