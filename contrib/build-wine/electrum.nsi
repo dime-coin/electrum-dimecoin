@@ -6,9 +6,9 @@
 ;--------------------------------
 ;Variables
 
-  !define PRODUCT_NAME "Electrum"
-  !define PRODUCT_WEB_SITE "https://github.com/spesmilo/electrum"
-  !define PRODUCT_PUBLISHER "Electrum Technologies GmbH"
+  !define PRODUCT_NAME "Electrum-Dime"
+  !define PRODUCT_WEB_SITE "https://github.com/dime-coin/electrum-dimecoin"
+  !define PRODUCT_PUBLISHER "Dimecoin Network LLC"
   !define PRODUCT_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_NAME}"
 
 ;--------------------------------
@@ -132,7 +132,7 @@ Section
   CreateShortCut "$SMPROGRAMS\${PRODUCT_NAME}\${PRODUCT_NAME} Testnet.lnk" "$INSTDIR\electrum-${PRODUCT_VERSION}.exe" "--testnet" "$INSTDIR\electrum-${PRODUCT_VERSION}.exe" 0
 
 
-  ;Links dimecoin: URIs to Electrum
+  ;Links dimecoin: URIs to Electrum-Dime
   WriteRegStr HKCU "Software\Classes\dimecoin" "" "URL:dimecoin Protocol"
   WriteRegStr HKCU "Software\Classes\dimecoin" "URL Protocol" ""
   WriteRegStr HKCU "Software\Classes\dimecoin" "DefaultIcon" "$\"$INSTDIR\electrum.ico, 0$\""
