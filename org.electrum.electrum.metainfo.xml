@@ -3,8 +3,8 @@
 <component type="desktop-application">
   <id>org.electrum.electrum</id>
 
-  <name>Electrum</name>
-  <summary>Bitcoin Wallet</summary>
+  <name>Electrum-Dime</name>
+  <summary>Dimecoin Wallet</summary>
 
   <metadata_license>MIT</metadata_license>
   <project_license>MIT</project_license>
