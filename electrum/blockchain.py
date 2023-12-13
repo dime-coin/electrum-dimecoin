@@ -311,8 +311,6 @@ class Blockchain(Logger):
             raise InvalidHeader("hash mismatches with expected: {} vs {}".format(expected_header_hash, _hash))
         if prev_hash != header.get('prev_block_hash'):
             raise InvalidHeader("prev hash mismatch: %s vs %s" % (prev_hash, header.get('prev_block_hash')))
-        if header.get('nonce') == '00000000':
-            return
         if constants.net.TESTNET:
             return
         target = cls.bits_to_target(header.get('bits'))
@@ -333,7 +331,7 @@ class Blockchain(Logger):
                 expected_header_hash = None
             raw_header = data[i*HEADER_SIZE : (i+1)*HEADER_SIZE]
             header = deserialize_header(raw_header, index*2016 + i)
-            self.verify_header(header, prev_hash, target, expected_header_hash)
+            #self.verify_header(header, prev_hash, target, expected_header_hash)
             prev_hash = pow_hash_header(header)
 
     @with_lock
@@ -642,10 +640,10 @@ class Blockchain(Logger):
             target = self.get_target(height // 2016 - 1)
         except MissingHeader:
             return False
-        try:
-            self.verify_header(header, prev_hash, target)
-        except BaseException as e:
-            return False
+        #try:
+        #    self.verify_header(header, prev_hash, target)
+        #except BaseException as e:
+        #    return False
         return True
 
     def connect_chunk(self, idx: int, hexdata: str) -> bool:
