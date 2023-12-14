@@ -8,7 +8,7 @@ Homepage: https://dimecoinnetwork.com/ ; original Electrum Homepage here at http
 ```
 ## Getting started
 
-_(If you've come here looking to simply run Electrum,
+_(If you've come here looking to simply run Electrum-Dime,
 [you may download it here](https://https://dimecoinnetwork.com/wallets).)_
 
 Electrum-Dime is entirely written in Python, as are most of its necessary dependencies. However, not all of them are Python-based. The following sections describe how to run from source, but here is a TL;DR:
