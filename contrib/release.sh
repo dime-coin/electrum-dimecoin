@@ -59,13 +59,13 @@ fi
 
 export SSHUSER="$GPGUSER"
 RELEASEMANAGER=""
-if [ "$GPGUSER" == "ThomasV" ]; then
-    PUBKEY="--local-user 6694D8DE7BE8EE5631BED9502BD5824B7F9470E6"
-    export SSHUSER=thomasv
+if [ "$GPGUSER" == "Dhop14" ]; then
+    PUBKEY="--local-user A3E6459E3707BC46849AC0AA964DA787DBC83054"
+    export SSHUSER=dhop14
     RELEASEMANAGER=1
-elif [ "$GPGUSER" == "sombernight_releasekey" ]; then
-    PUBKEY="--local-user 0EEDCFD5CAFB459067349B23CA9EEEC43DF911DC"
-    export SSHUSER=sombernight
+elif [ "$GPGUSER" == "prettyflyforabeeguy" ]; then
+    PUBKEY="--local-user XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+    export SSHUSER=prettyflyforabeeguy
 fi
 
 
