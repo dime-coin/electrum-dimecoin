@@ -1,6 +1,6 @@
 [submodule "contrib/deterministic-build/electrum-locale"]
 	path = contrib/deterministic-build/electrum-locale
-	url = https://github.com/spesmilo/electrum-locale
+	url = https://github.com/dime-coin/electrum-locale
 [submodule "electrum/www"]
 	path = electrum/plugins/payserver/www
 	url = https://github.com/dime-coin/electrum-dimecoin.git
