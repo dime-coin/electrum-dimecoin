@@ -32,7 +32,7 @@ similar system.
 
 ## Code Signing
 
-Electrum Windows builds are signed with a Microsoft Authenticode™ code signing
+Electrum-Dime Windows builds are signed with a Microsoft Authenticode™ code signing
 certificate in addition to the GPG-based signatures.
 
 The advantage of using Authenticode is that Electrum-Dime users won't receive a

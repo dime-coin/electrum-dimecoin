@@ -62,7 +62,7 @@ You probably need to clear the cache: `rm -rf .buildozer/android/platform/build-
 ### How do I deploy on connected phone for quick testing?
 Assuming `adb` is installed:
 ```
-$ adb -d install -r dist/Electrum-*-arm64-v8a-debug.apk
+$ adb -d install -r dist/Electrum-Dime*-arm64-v8a-debug.apk
 $ adb shell monkey -p org.electrum.electrum 1
 ```
 
@@ -151,11 +151,11 @@ Or use Android Studio: "Device File Explorer", which can download/upload data di
 ### How to investigate diff between binaries if reproducibility fails?
 ```
 cd dist/
-unzip Electrum-*.apk1 -d apk1
+unzip Electrum-Dime*.apk1 -d apk1
 mkdir apk1/assets/private_mp3/
 tar -xzvf apk1/assets/private.tar --directory apk1/assets/private_mp3/
 
-unzip Electrum-*.apk2 -d apk2
+unzip Electrum-Dime*.apk2 -d apk2
 mkdir apk2/assets/private_mp3/
 tar -xzvf apk2/assets/private.tar --directory apk2/assets/private_mp3/
 
@@ -184,5 +184,5 @@ However, it is possible to resign the apk manually with one's own key, using
 e.g. [`apksigner`](https://developer.android.com/studio/command-line/apksigner),
 mutating the apk in place, after which it should be possible to upgrade:
 ```
-apksigner sign --ks ~/wspace/electrum/contrib/android/android_debug.keystore Electrum-*-arm64-v8a-debug.apk
+apksigner sign --ks ~/wspace/electrum/contrib/android/android_debug.keystore Electrum-Dime*-arm64-v8a-debug.apk
 ```
