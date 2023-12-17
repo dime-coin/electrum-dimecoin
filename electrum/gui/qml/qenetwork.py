@@ -248,7 +248,7 @@ class QENetwork(QObject, QtEventListener):
 
     @pyqtProperty(str, notify=dataChanged)
     def networkName(self):
-        return constants.net.__name__.replace('Bitcoin', '')
+        return constants.net.__name__.replace('Dimecoin', '')
 
     @pyqtProperty('QVariantMap', notify=proxyChanged)
     def proxy(self):

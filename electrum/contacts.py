@@ -100,7 +100,7 @@ class Contacts(dict, Logger):
                 }
         if openalias := self.resolve_openalias(k):
             return openalias
-        raise AliasNotFoundException("Invalid Bitcoin address or alias", k)
+        raise AliasNotFoundException("Invalid Dimecoin address or alias", k)
 
     @classmethod
     def resolve_openalias(cls, url: str) -> Dict[str, Any]:
