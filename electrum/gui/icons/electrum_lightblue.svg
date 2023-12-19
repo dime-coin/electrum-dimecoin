@@ -1,193 +1,65 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:xlink="http://www.w3.org/1999/xlink"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   version="1.1"
-   width="779.8111"
-   height="779.8111"
-   id="svg2"
-   inkscape:version="1.0.2-2 (e86c870879, 2021-01-15)"
-   sodipodi:docname="electrum_lightblue.svg"
-   inkscape:export-filename="/home/voegtlin/logos/electrum_blue.png"
-   inkscape:export-xdpi="10.014582"
-   inkscape:export-ydpi="10.014582">
-  <metadata
-     id="metadata53">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
-      </cc:Work>
-    </rdf:RDF>
-  </metadata>
-  <sodipodi:namedview
-     pagecolor="#ffffff"
-     bordercolor="#666666"
-     borderopacity="1"
-     objecttolerance="10"
-     gridtolerance="10"
-     guidetolerance="10"
-     inkscape:pageopacity="0"
-     inkscape:pageshadow="2"
-     inkscape:window-width="1920"
-     inkscape:window-height="1027"
-     id="namedview51"
-     showgrid="false"
-     showguides="true"
-     inkscape:guide-bbox="true"
-     inkscape:zoom="0.1767767"
-     inkscape:cx="637.59035"
-     inkscape:cy="804.37887"
-     inkscape:window-x="-8"
-     inkscape:window-y="-8"
-     inkscape:window-maximized="1"
-     inkscape:current-layer="svg2"
-     inkscape:showpageshadow="false"
-     showborder="false"
-     inkscape:document-rotation="0"
-     fit-margin-top="43.37159"
-     fit-margin-left="5"
-     fit-margin-right="5"
-     fit-margin-bottom="43.37159" />
-  <defs
-     id="defs4">
-    <linearGradient
-       id="linearGradient3987">
-      <stop
-         style="stop-color:#41b3ec;stop-opacity:1;"
-         offset="0"
-         id="stop4032" />
-      <stop
-         style="stop-color:#0581c4;stop-opacity:1;"
-         offset="1"
-         id="stop3991" />
-    </linearGradient>
-    <linearGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient3987"
-       id="linearGradient3996"
-       x1="11.848"
-       y1="179.9725"
-       x2="263.60077"
-       y2="179.9725"
-       gradientUnits="userSpaceOnUse"
-       gradientTransform="translate(8.6924921,11.686933)" />
-    <linearGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient3987"
-       id="linearGradient4010"
-       x1="11.348"
-       y1="179.9725"
-       x2="264.10077"
-       y2="179.9725"
-       gradientUnits="userSpaceOnUse"
-       gradientTransform="translate(8.6924921,11.686933)" />
-    <linearGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient3987"
-       id="linearGradient4012"
-       gradientUnits="userSpaceOnUse"
-       x1="254.73778"
-       y1="334.82437"
-       x2="9.1209993"
-       y2="-4.0966849"
-       gradientTransform="translate(8.6924921,11.686933)" />
-    <linearGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient3987"
-       id="linearGradient4014"
-       gradientUnits="userSpaceOnUse"
-       x1="254.73778"
-       y1="334.82437"
-       x2="9.1209993"
-       y2="-4.0966849"
-       gradientTransform="translate(8.6924921,11.686933)" />
-    <radialGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient3987"
-       id="radialGradient3786"
-       cx="523.18433"
-       cy="732.08508"
-       fx="523.18433"
-       fy="732.08508"
-       r="146.04732"
-       gradientTransform="matrix(-0.89061708,0.86297075,-0.78291311,-0.80799475,1427.0215,361.93369)"
-       gradientUnits="userSpaceOnUse" />
-    <radialGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient3987"
-       id="radialGradient3796"
-       cx="529.57996"
-       cy="728.15845"
-       fx="529.57996"
-       fy="728.15845"
-       r="146.04732"
-       gradientTransform="matrix(-0.87083717,0.55292729,-0.71897156,-1.1320773,466.9435,499.54917)"
-       gradientUnits="userSpaceOnUse" />
-    <radialGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient3987"
-       id="radialGradient3800"
-       cx="505.65533"
-       cy="726.3916"
-       fx="505.65533"
-       fy="726.3916"
-       r="146.04732"
-       gradientTransform="matrix(-0.94821917,1.3404019,-1.4302101,-1.0037148,1646.3219,-657.0863)"
-       gradientUnits="userSpaceOnUse" />
-  </defs>
-  <ellipse
-     style="fill:none;fill-opacity:0;stroke:url(#radialGradient3786);stroke-width:37.5001;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-start:none"
-     id="path3803"
-     inkscape:export-filename="/home/voegtlin/logos/electrum_light.png"
-     inkscape:export-xdpi="15.13"
-     inkscape:export-ydpi="15.13"
-     cx="389.90555"
-     cy="389.90555"
-     rx="366.15549"
-     ry="173.5993" />
-  <ellipse
-     transform="matrix(-0.50141536,-0.8652067,0.86684024,-0.498586,0,0)"
-     id="path4023"
-     style="fill:none;fill-opacity:0;stroke:url(#radialGradient3796);stroke-width:37.5002;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-start:none"
-     inkscape:export-filename="/home/voegtlin/logos/electrum_light.png"
-     inkscape:export-xdpi="15.13"
-     inkscape:export-ydpi="15.13"
-     cx="-532.39014"
-     cy="141.84499"
-     rx="365.12195"
-     ry="174.09163" />
-  <ellipse
-     style="fill:none;fill-opacity:0;stroke:url(#radialGradient3800);stroke-width:37.5002;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-start:none"
-     id="path4029"
-     transform="matrix(-0.50141531,0.86520673,-0.86684024,-0.498586,0,0)"
-     inkscape:export-filename="/home/voegtlin/logos/electrum_light.png"
-     inkscape:export-xdpi="15.13"
-     inkscape:export-ydpi="15.13"
-     cx="143.58514"
-     cy="-532.85632"
-     rx="365.12195"
-     ry="174.09163" />
-  <g
-     id="g5"
-     transform="matrix(0.69025084,0,0,0.68452521,303.02483,261.95235)"
-     style="fill:url(#linearGradient4010);fill-opacity:1;stroke:url(#linearGradient3996)"
-     inkscape:export-filename="/home/voegtlin/logos/electrum_light.png"
-     inkscape:export-xdpi="15.13"
-     inkscape:export-ydpi="15.13">
-    <path
-       id="path7"
-       d="m 217.021,167.042 c 18.631,-9.483 30.288,-26.184 27.565,-54.007 C 240.919,75.012 208.06,62.262 166.58,58.631 L 166.572,5.89 h -32.139 l -0.009,51.354 c -8.456,0 -17.076,0.166 -25.657,0.338 L 108.76,5.897 76.65,5.894 76.644,58.622 c -6.959,0.142 -13.793,0.277 -20.466,0.277 v -0.156 l -44.33,-0.018 0.006,34.282 c 0,0 23.734,-0.446 23.343,-0.013 13.013,0.009 17.262,7.559 18.484,14.076 l 0.01,60.083 v 84.397 c -0.573,4.09 -2.984,10.625 -12.083,10.637 0.414,0.364 -23.379,-0.004 -23.379,-0.004 l -6.375,38.335 h 41.817 c 7.792,0.009 15.448,0.13 22.959,0.19 l 0.028,53.338 32.102,0.009 -0.009,-52.779 c 8.832,0.18 17.357,0.258 25.684,0.247 l -0.009,52.532 h 32.138 l 0.018,-53.249 c 54.022,-3.1 91.842,-16.697 96.544,-67.385 3.79,-40.809 -15.434,-59.025 -46.105,-66.379 z M 109.535,95.321 c 18.126,0 75.132,-5.767 75.14,32.064 -0.008,36.269 -56.996,32.032 -75.14,32.032 V 95.321 Z m -0.014,167.126 0.014,-70.672 c 21.778,-0.006 90.085,-6.261 90.094,35.32 0.009,39.876 -68.316,35.336 -90.108,35.352 z"
-       inkscape:connector-curvature="0"
-       style="fill:url(#linearGradient4012);fill-opacity:1;stroke:url(#linearGradient4014)" />
-  </g>
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 28.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1"
+	 id="svg2" xmlns:svg="http://www.w3.org/2000/svg" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" inkscape:export-xdpi="10.014582" inkscape:export-ydpi="10.014582"
+	 xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 779.8 779.8"
+	 style="enable-background:new 0 0 779.8 779.8;" xml:space="preserve">
+<style type="text/css">
+	.st0{fill:none;stroke:url(#path3803_00000130617773139886657850000015692259404368579749_);stroke-width:37.5001;}
+	.st1{fill:none;stroke:url(#path4023_00000093880028176346962310000016833930591311599238_);stroke-width:37.5002;}
+	.st2{fill:none;stroke:url(#path4029_00000057147727054204077350000010942656808134216349_);stroke-width:37.5002;}
+	
+		.st3{fill:url(#path7_00000150094820851916710980000003862770130407249288_);stroke:url(#path7_00000183215886593793172140000015328834004879106957_);}
+	.st4{fill:#FFFFFF;}
+	.st5{fill:#0581C4;}
+</style>
+<sodipodi:namedview  bordercolor="#666666" borderopacity="1" fit-margin-bottom="43.37159" fit-margin-left="5" fit-margin-right="5" fit-margin-top="43.37159" gridtolerance="10" guidetolerance="10" id="namedview51" inkscape:current-layer="svg2" inkscape:cx="637.59035" inkscape:cy="804.37887" inkscape:document-rotation="0" inkscape:guide-bbox="true" inkscape:pageopacity="0" inkscape:pageshadow="2" inkscape:showpageshadow="false" inkscape:window-height="1027" inkscape:window-maximized="1" inkscape:window-width="1920" inkscape:window-x="-8" inkscape:window-y="-8" inkscape:zoom="0.1767767" objecttolerance="10" pagecolor="#ffffff" showborder="false" showgrid="false" showguides="true">
+	</sodipodi:namedview>
+<radialGradient id="path3803_00000152262072410292238590000004033698483822153872_" cx="-96.7634" cy="1424.3253" r="146.0473" gradientTransform="matrix(-0.8906 0.863 0.7829 0.808 -813.3964 -845.4378)" gradientUnits="userSpaceOnUse">
+	<stop  offset="0" style="stop-color:#41B3EC"/>
+	<stop  offset="1" style="stop-color:#0581C4"/>
+</radialGradient>
+<ellipse id="path3803" inkscape:export-filename="/home/voegtlin/logos/electrum_light.png" inkscape:export-xdpi="15.13" inkscape:export-ydpi="15.13" style="fill:none;stroke:url(#path3803_00000152262072410292238590000004033698483822153872_);stroke-width:37.5001;" cx="389.9" cy="389.9" rx="366.2" ry="173.6">
+</ellipse>
+<radialGradient id="path4023_00000166655063914246245960000017438725090062436744_" cx="716.2072" cy="469.9449" r="146.0473" gradientTransform="matrix(0.916 0.4778 0.6208 -1.1865 -715.8594 679.3097)" gradientUnits="userSpaceOnUse">
+	<stop  offset="0" style="stop-color:#41B3EC"/>
+	<stop  offset="1" style="stop-color:#0581C4"/>
+</radialGradient>
+<ellipse id="path4023" inkscape:export-filename="/home/voegtlin/logos/electrum_light.png" inkscape:export-xdpi="15.13" inkscape:export-ydpi="15.13" transform="matrix(0.8647 -0.5022 0.5022 0.8647 -143.0841 248.5736)" style="fill:none;stroke:url(#path4023_00000166655063914246245960000017438725090062436744_);stroke-width:37.5002;" cx="389.9" cy="389.9" rx="174.1" ry="365.1">
+</ellipse>
+<radialGradient id="path4029_00000132789799568337629510000010838221689706695325_" cx="-596.7334" cy="494.3029" r="146.0473" gradientTransform="matrix(-0.6865 -1.4887 -1.5872 0.737 924.8229 -788.7544)" gradientUnits="userSpaceOnUse">
+	<stop  offset="0" style="stop-color:#41B3EC"/>
+	<stop  offset="1" style="stop-color:#0581C4"/>
+</radialGradient>
+<ellipse id="path4029" inkscape:export-filename="/home/voegtlin/logos/electrum_light.png" inkscape:export-xdpi="15.13" inkscape:export-ydpi="15.13" transform="matrix(0.5022 -0.8647 0.8647 0.5022 -143.0841 531.2375)" style="fill:none;stroke:url(#path4029_00000132789799568337629510000010838221689706695325_);stroke-width:37.5002;" cx="389.9" cy="389.9" rx="365.1" ry="174.1">
+</ellipse>
+<g id="g5" transform="matrix(0.69025084,0,0,0.68452521,303.02483,261.95235)" inkscape:export-filename="/home/voegtlin/logos/electrum_light.png" inkscape:export-xdpi="15.13" inkscape:export-ydpi="15.13">
+	
+		<linearGradient id="path7_00000030451201225206799760000006554831381610036352_" gradientUnits="userSpaceOnUse" x1="298.2871" y1="-159.6612" x2="52.6703" y2="179.2598" gradientTransform="matrix(0.6903 0 0 -0.6845 38.4293 251.0669)">
+		<stop  offset="0" style="stop-color:#41B3EC"/>
+		<stop  offset="1" style="stop-color:#0581C4"/>
+	</linearGradient>
+	
+		<linearGradient id="path7_00000109030979035228717940000015915953822725578654_" gradientUnits="userSpaceOnUse" x1="298.1281" y1="-159.7774" x2="52.5113" y2="179.1436" gradientTransform="matrix(0.6903 0 0 -0.6845 38.4293 251.0669)">
+		<stop  offset="0" style="stop-color:#41B3EC"/>
+		<stop  offset="1" style="stop-color:#0581C4"/>
+	</linearGradient>
+	
+		<path id="path7" inkscape:connector-curvature="0" style="fill:url(#path7_00000030451201225206799760000006554831381610036352_);stroke:url(#path7_00000109030979035228717940000015915953822725578654_);" d="
+		M217,167c18.6-9.5,30.3-26.2,27.6-54c-3.7-38-36.5-50.8-78-54.4l0-52.7h-32.1l0,51.4c-8.5,0-17.1,0.2-25.7,0.3l0-51.7l-32.1,0
+		l0,52.7c-7,0.1-13.8,0.3-20.5,0.3v-0.2l-44.3,0l0,34.3c0,0,23.7-0.4,23.3,0c13,0,17.3,7.6,18.5,14.1l0,60.1v84.4
+		c-0.6,4.1-3,10.6-12.1,10.6c0.4,0.4-23.4,0-23.4,0l-6.4,38.3h41.8c7.8,0,15.4,0.1,23,0.2l0,53.3l32.1,0l0-52.8
+		c8.8,0.2,17.4,0.3,25.7,0.2l0,52.5h32.1l0-53.2c54-3.1,91.8-16.7,96.5-67.4C266.9,192.6,247.7,174.4,217,167L217,167z M109.5,95.3
+		c18.1,0,75.1-5.8,75.1,32.1c0,36.3-57,32-75.1,32V95.3z M109.5,262.4l0-70.7c21.8,0,90.1-6.3,90.1,35.3
+		C199.6,267,131.3,262.4,109.5,262.4z"/>
+</g>
+<rect x="305" y="260" class="st4" width="184" height="255"/>
+<g>
+	<path class="st5" d="M307.1,350.3c9,0,16.4,7.3,16.4,16.3v46.6c0,9-7.4,16.3-16.4,16.3h-62.8v-79.2H307.1z M261.4,412.3h44.9v-44.9
+		h-44.9V412.3z"/>
+	<path class="st5" d="M336,350.3h17.2v79.2H336V350.3z"/>
+	<path class="st5" d="M431.2,350.3h17.7v79.2h-17.2v-53.1c-8.9,10.6-18.5,22.2-27.3,32.6l-27.4-32.5v53h-17v-79.2h17.6l26.8,32
+		L431.2,350.3z"/>
+	<path class="st5" d="M535.5,367.5h-55.9v13.9h45v17.2h-45v13.9h55.9v17.2h-73.2v-79.2h73.2V367.5z"/>
+</g>
 </svg>
