@@ -87,7 +87,7 @@ def all_subclasses(cls) -> Set:
 ca_path = certifi.where()
 
 
-base_units = {'BTC':5, 'mDIME':3, 'bits':2, 'sat':0}
+base_units = {'DIME':3, 'bits':2, 'sat':0}
 base_units_inverse = inv_dict(base_units)
 base_units_list = ['DIME', 'mDIME', 'bits', 'sat']  # list(dict) does not guarantee order
 
