@@ -828,8 +828,6 @@ class Transaction:
                 parse_witness(vds, txin)
         self._inputs = txins  # only expose field after witness is parsed, for sanity
         self._locktime = vds.read_uint32()
-        if vds.can_read_more():
-            raise SerializationError('extra junk at the end')
 
     @classmethod
     def serialize_witness(cls, txin: TxInput, *, estimate_size=False) -> str:
@@ -954,9 +952,15 @@ class Transaction:
             marker = '00'
             flag = '01'
             witness = ''.join(self.serialize_witness(x, estimate_size=estimate_size) for x in inputs)
-            return nVersion + marker + flag + txins + txouts + witness + nLocktime
+            if self.version > 1:
+                return nVersion + marker + flag + txins + txouts + witness + nLocktime + "00"
+            else:
+                return nVersion + marker + flag + txins + txouts + witness + nLocktime
         else:
-            return nVersion + txins + txouts + nLocktime
+            if self.version > 1:
+                return nVersion + txins + txouts + nLocktime + "00"
+            else:
+                return nVersion + txins + txouts + nLocktime
 
     def to_qr_data(self) -> Tuple[str, bool]:
         """Returns (serialized_tx, is_complete). The tx is serialized to be put inside a QR code. No side-effects.
