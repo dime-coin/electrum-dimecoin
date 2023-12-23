@@ -634,8 +634,8 @@ class Blockchain(Logger):
             prev_hash = self.get_hash(height - 1)
         except Exception:
             return False
-        if prev_hash != header.get('prev_block_hash'):
-            return False
+        #if prev_hash != header.get('prev_block_hash'):
+        #    return False
         try:
             target = self.get_target(height // 2016 - 1)
         except MissingHeader:
