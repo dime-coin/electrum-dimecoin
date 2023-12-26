@@ -823,7 +823,7 @@ class SimpleConfig(Logger):
         # to be consistent with what is displayed in the GUI,
         # the calculation needs to use the same precision:
         fee_per_byte = quantize_feerate(fee_per_byte)
-        return round(fee_per_byte * size)
+        return max(round(fee_per_byte * size), 1000)
 
     def update_fee_estimates(self, nblock_target: int, fee_per_kb: int):
         assert isinstance(nblock_target, int), f"expected int, got {nblock_target!r}"
@@ -1048,7 +1048,7 @@ This will result in longer routes; it might increase your fees and decrease the 
     TEST_SHUTDOWN_FEE_RANGE = ConfigVar('test_shutdown_fee_range', default=None)
     TEST_SHUTDOWN_LEGACY = ConfigVar('test_shutdown_legacy', default=False, type_=bool)
 
-    FEE_EST_DYNAMIC = ConfigVar('dynamic_fees', default=True, type_=bool)
+    FEE_EST_DYNAMIC = ConfigVar('dynamic_fees', default=False, type_=bool)
     FEE_EST_USE_MEMPOOL = ConfigVar('mempool_fees', default=False, type_=bool)
     FEE_EST_STATIC_FEERATE = ConfigVar('fee_per_kb', default=FEERATE_FALLBACK_STATIC_FEE, type_=int)
     FEE_EST_DYNAMIC_ETA_SLIDERPOS = ConfigVar('fee_level', default=2, type_=int)
