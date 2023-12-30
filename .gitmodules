@@ -3,4 +3,4 @@
 	url = https://github.com/dime-coin/electrum-locale.git
 [submodule "electrum/www"]
 	path = electrum/plugins/payserver/www
-	url = https://github.com/dime-coin/electrum-dimecoin.git
+	url = https://github.com/dime-coin/electrum-http.git
