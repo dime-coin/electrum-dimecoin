@@ -778,7 +778,7 @@ class ElectrumWindow(QMainWindow, MessageBoxMixin, Logger, QtEventListener):
         if not constants.net.TESTNET:
             help_menu.addAction(_("&Dimecoin Paper"), lambda: webopen("https://www.dimecoinnetwork.com/wp-content/uploads/2021/01/Dimecoinv1.05.pdf"))
         help_menu.addSeparator()
-        help_menu.addAction(_("&Documentation"), lambda: webopen("docs.dimecoinnetwork.com/")).setShortcut(QKeySequence.HelpContents)
+        help_menu.addAction(_("&Documentation"), lambda: webopen("https://electrum-docs.dimecoinnetwork.com/")).setShortcut(QKeySequence.HelpContents)
         help_menu.addAction(_("&Telegram Support"), lambda: webopen("https://t.me/Dimecoin/163982"))
         help_menu.addSeparator()        
         help_menu.addAction(_("&Report Bug"), self.show_report_bug)
