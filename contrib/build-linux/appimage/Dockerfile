@@ -15,8 +15,11 @@ RUN apt update -qq > /dev/null && apt install -qq --yes --no-install-recommends 
 COPY apt.sources.list /etc/apt/sources.list
 COPY apt.preferences /etc/apt/preferences.d/snapshot
 
+# Temporarily switch to root user to perform installation
+USER root
+
 RUN apt-get update -q && \
-    apt-get install -qy --allow-downgrades \
+    apt-get install -qy --allow-downgrades --fix-missing \
         sudo \
         git \
         wget \
@@ -69,6 +72,9 @@ RUN apt-get update -q && \
     rm -rf /var/lib/apt/lists/* && \
     apt-get autoremove -y && \
     apt-get clean
+
+# Switch back to non-root user after necessary operations
+USER ${USER}
 
 # create new user to avoid using root; but with sudo access and no password for convenience.
 ARG UID=1000

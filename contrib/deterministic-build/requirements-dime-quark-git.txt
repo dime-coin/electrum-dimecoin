@@ -1,0 +1,1 @@
+pivx_quark_hash @ git+https://github.com/dime-coin/dime_quark_hash@441f7a1e3d81f4f643d4094fafab364f5cfcf2de
