@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 #
-# Electrum - lightweight Bitcoin client
+# Electrum-Dime - lightweight Dimecoin client
 # Copyright (C) 2012 thomasv@gitorious
+# Copyright (C) 2018-2024 Dimecoin Developers
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -146,7 +147,7 @@ class NodesListWidget(QTreeWidget):
     def update(self, *, network: Network, servers: dict):
         self.clear()
 
-        use_tor = network.tor_proxy
+        use_tor = bool(network.is_proxy_tor)
 
         # connected servers
         connected_servers_item = QTreeWidgetItem([_("Connected nodes"), ''])
@@ -272,7 +273,7 @@ class NetworkChoiceLayout(object):
 
         grid.addWidget(self.tor_cb, 1, 0, 1, 3)
         grid.addWidget(self.proxy_cb, 2, 0, 1, 3)
-        grid.addWidget(HelpButton(_('Proxy settings apply to all connections: with Electrum servers, but also with third-party services.')), 2, 4)
+        grid.addWidget(HelpButton(_('Proxy settings apply to all connections: with Electrum-Dime servers, but also with third-party services.')), 2, 4)
         grid.addWidget(self.proxy_mode, 4, 1)
         grid.addWidget(self.proxy_host, 4, 2)
         grid.addWidget(self.proxy_port, 4, 3)
@@ -283,7 +284,7 @@ class NetworkChoiceLayout(object):
         # Blockchain Tab
         grid = QGridLayout(blockchain_tab)
         msg =  ' '.join([
-            _("Electrum connects to several nodes in order to download block headers and find out the longest blockchain."),
+            _("Electrum-Dime connects to several nodes in order to download block headers and find out the longest blockchain."),
             _("This blockchain is used to verify the transactions sent by your transaction server.")
         ])
         self.status_label = QLabel('')
@@ -296,8 +297,8 @@ class NetworkChoiceLayout(object):
         self.autoconnect_cb.clicked.connect(self.set_server)
         self.autoconnect_cb.clicked.connect(self.update)
         msg = ' '.join([
-            _("If auto-connect is enabled, Electrum will always use a server that is on the longest blockchain."),
-            _("If it is disabled, you have to choose a server you want to use. Electrum will warn you if your server is lagging.")
+            _("If auto-connect is enabled, Electrum-Dime will always use a server that is on the longest blockchain."),
+            _("If it is disabled, you have to choose a server you want to use. Electrum-Dime will warn you if your server is lagging.")
         ])
         grid.addWidget(self.autoconnect_cb, 1, 0, 1, 3)
         grid.addWidget(HelpButton(msg), 1, 4)
@@ -305,7 +306,7 @@ class NetworkChoiceLayout(object):
         self.server_e = QLineEdit()
         self.server_e.setFixedWidth(fixed_width_hostname + fixed_width_port)
         self.server_e.editingFinished.connect(self.set_server)
-        msg = _("Electrum sends your wallet addresses to a single server, in order to receive your transaction history.")
+        msg = _("Electrum-Dime sends your wallet addresses to a single server, in order to receive your transaction history.")
         grid.addWidget(QLabel(_('Server') + ':'), 2, 0)
         grid.addWidget(self.server_e, 2, 1, 1, 3)
         grid.addWidget(HelpButton(msg), 2, 4)
@@ -433,8 +434,6 @@ class NetworkChoiceLayout(object):
         if self.proxy_cb.isChecked():
             if not self.proxy_port.hasAcceptableInput():
                 return
-            if ':' in self.proxy_host.text():  # avoid deserialization pitfall
-                return
             proxy = {'mode':str(self.proxy_mode.currentText()).lower(),
                      'host':str(self.proxy_host.text()),
                      'port':str(self.proxy_port.text()),
@@ -540,7 +539,7 @@ class ProxyWidget(QWidget):
         self.proxy_password.setFixedWidth(fixed_width_port)
 
         grid.addWidget(self.proxy_cb, 0, 0, 1, 3)
-        grid.addWidget(HelpButton(_('Proxy settings apply to all connections: with Electrum servers, but also with third-party services.')), 0, 4)
+        grid.addWidget(HelpButton(_('Proxy settings apply to all connections: with Electrum-Dime servers, but also with third-party services.')), 0, 4)
         grid.addWidget(self.proxy_mode, 1, 1)
         grid.addWidget(self.proxy_host, 1, 2)
         grid.addWidget(self.proxy_port, 1, 3)
@@ -572,7 +571,7 @@ class ServerWidget(QWidget, QtEventListener):
         grid = QGridLayout(self)
 
         msg = ' '.join([
-            _("Electrum connects to several nodes in order to download block headers and find out the longest blockchain."),
+            _("Electrum-Dime connects to several nodes in order to download block headers and find out the longest blockchain."),
             _("This blockchain is used to verify the transactions sent by your transaction server.")
         ])
         self.status_label = QLabel('')
@@ -583,15 +582,15 @@ class ServerWidget(QWidget, QtEventListener):
         self.autoconnect_cb = QCheckBox(_('Select server automatically'))
         self.autoconnect_cb.setEnabled(self.config.cv.NETWORK_AUTO_CONNECT.is_modifiable())
         msg = ' '.join([
-            _("If auto-connect is enabled, Electrum will always use a server that is on the longest blockchain."),
-            _("If it is disabled, you have to choose a server you want to use. Electrum will warn you if your server is lagging.")
+            _("If auto-connect is enabled, Electrum-Dime will always use a server that is on the longest blockchain."),
+            _("If it is disabled, you have to choose a server you want to use. Electrum-Dime will warn you if your server is lagging.")
         ])
         grid.addWidget(self.autoconnect_cb, 1, 0, 1, 3)
         grid.addWidget(HelpButton(msg), 1, 4)
 
         self.server_e = QLineEdit()
         self.server_e.setFixedWidth(fixed_width_hostname + fixed_width_port)
-        msg = _("Electrum sends your wallet addresses to a single server, in order to receive your transaction history.")
+        msg = _("Electrum-Dime sends your wallet addresses to a single server, in order to receive your transaction history.")
         grid.addWidget(QLabel(_('Server') + ':'), 2, 0)
         grid.addWidget(self.server_e, 2, 1, 1, 3)
         grid.addWidget(HelpButton(msg), 2, 4)

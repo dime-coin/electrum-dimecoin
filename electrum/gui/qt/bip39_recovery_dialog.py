@@ -1,4 +1,5 @@
 # Copyright (C) 2020 The Electrum developers
+# Copyright (C) 2018-2024 Dimecoin Developers
 # Distributed under the MIT software license, see the accompanying
 # file LICENCE or http://www.opensource.org/licenses/mit-license.php
 
@@ -12,6 +13,7 @@ from electrum.i18n import _
 from electrum.network import Network
 from electrum.bip39_recovery import account_discovery
 from electrum.logging import get_logger
+from electrum.util import get_asyncio_loop, UserFacingException
 
 from .util import WindowModalDialog, MessageBoxMixin, TaskThread, Buttons, CancelButton, OkButton
 
@@ -37,7 +39,7 @@ class Bip39RecoveryDialog(WindowModalDialog):
         self.thread.finished.connect(self.deleteLater) # see #3956
         network = Network.get_instance()
         coro = account_discovery(network, self.get_account_xpub)
-        fut = asyncio.run_coroutine_threadsafe(coro, network.asyncio_loop)
+        fut = asyncio.run_coroutine_threadsafe(coro, get_asyncio_loop())
         self.thread.add(
             fut.result,
             on_success=self.on_recovery_success,
@@ -81,8 +83,12 @@ class Bip39RecoveryDialog(WindowModalDialog):
         if isinstance(e, concurrent.futures.CancelledError):
             return
         self.clear_content()
-        self.content.addWidget(QLabel(_('Error: Account discovery failed.')))
-        _logger.error(f"recovery error", exc_info=exc_info)
+        msg = _('Error: Account discovery failed.')
+        if isinstance(e, UserFacingException):
+            msg += f"\n{e}"
+        else:
+            _logger.error(f"recovery error", exc_info=exc_info)
+        self.content.addWidget(QLabel(msg))
 
     def clear_content(self):
         for i in reversed(range(self.content.count())):

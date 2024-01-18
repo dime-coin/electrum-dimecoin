@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 #
-# Electrum - lightweight Bitcoin client
+# Electrum-Dime - lightweight Dimecoin client
 # Copyright (C) 2013 ecdsa@github
+# Copyright (C) 2018-2024 Dimecoin Developers
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -267,8 +268,9 @@ class SeedLayout(QVBoxLayout):
         if self.seed_type == 'bip39':
             from electrum.keystore import bip39_is_checksum_valid
             is_checksum, is_wordlist = bip39_is_checksum_valid(s)
-            status = ('checksum: ' + ('ok' if is_checksum else 'failed')) if is_wordlist else 'unknown wordlist'
-            label = 'BIP39' + ' (%s)'%status
+            label = ''
+            if bool(s):
+                label = ('' if is_checksum else _('BIP39 checksum failed')) if is_wordlist else _('Unknown BIP39 wordlist')
         elif self.seed_type == 'slip39':
             self.slip39_mnemonics[self.slip39_mnemonic_index] = s
             try:

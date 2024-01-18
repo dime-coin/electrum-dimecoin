@@ -1,4 +1,5 @@
 # Copyright (c) 2019 Calin Culianu <calin.culianu@gmail.com>
+# Copyright (C) 2018-2024 Dimecoin Developers
 # Distributed under the MIT software license, see the accompanying
 # file LICENCE or http://www.opensource.org/licenses/mit-license.php
 
@@ -17,7 +18,7 @@ _logger = get_logger(__name__)
 
 class RateLimiter(Logger):
     ''' Manages the state of a @rate_limited decorated function, collating
-    multiple invocations. This class is not intented to be used directly. Instead,
+    multiple invocations. This class is not intended to be used directly. Instead,
     use the @rate_limited decorator (for instance methods).
     This state instance gets inserted into the instance attributes of the target
     object wherever a @rate_limited decorator appears.

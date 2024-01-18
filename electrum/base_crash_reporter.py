@@ -1,4 +1,4 @@
-# Electrum - lightweight Bitcoin client
+# Electrum-Dime - lightweight Dimecoin client
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -41,7 +41,7 @@ class CrashReportResponse(NamedTuple):
 
 
 class BaseCrashReporter(Logger):
-    report_server = "https://crashhub.electrum.org"
+    report_server = ""
     issue_template = """<h2>Traceback</h2>
 <pre>
 {traceback}
@@ -56,7 +56,7 @@ class BaseCrashReporter(Logger):
   <li>Locale: {locale}</li>
 </ul>
     """
-    CRASH_MESSAGE = _('Something went wrong while executing Electrum.')
+    CRASH_MESSAGE = _('Something went wrong while executing Electrum-Dime.')
     CRASH_TITLE = _('Sorry!')
     REQUEST_HELP_MESSAGE = _('To help us diagnose and fix the problem, you can send us a bug report that contains '
                              'useful debug information:')

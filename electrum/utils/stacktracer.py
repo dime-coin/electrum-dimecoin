@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 #
 # Copyright (C) 2010 Laszlo Nagy (nagylzs)
+# Copyright (C) 2018-2024 Dimecoin Developers
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files

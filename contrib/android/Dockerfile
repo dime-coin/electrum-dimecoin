@@ -123,6 +123,7 @@ RUN apt -y update -qq \
         git \
         zip \
         unzip \
+        rsync \
         build-essential \
         ccache \
         autoconf \
@@ -165,7 +166,7 @@ RUN chown --recursive ${USER} ${WORK_DIR} ${ANDROID_SDK_HOME}
 RUN chown ${USER} /opt
 USER ${USER}
 
-# venv, VIRTUAL_ENV is used by buildozer to indicate a venv environemnt
+# venv, VIRTUAL_ENV is used by buildozer to indicate a venv environment
 ENV VIRTUAL_ENV=/opt/venv
 RUN python3 -m venv ${VIRTUAL_ENV}
 ENV PATH="${VIRTUAL_ENV}/bin:${PATH}"
@@ -196,8 +197,7 @@ RUN cd /opt \
     && git remote add accumulator https://github.com/accumulator/python-for-android \
     && git fetch --all \
     # commit: from branch accumulator/qt6-wip (note: careful with force-pushing! see #8162) \
-    #
-    && git checkout "eb4a3522373e0b4e2749b8a8bc965ff51355ea35^{commit}" \
+    && git checkout "d976b539dc7c808d103a7edfe6dc1fd300582a89^{commit}" \
     && /opt/venv/bin/python3 -m pip install --no-build-isolation --no-dependencies -e .
 
 # build env vars

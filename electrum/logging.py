@@ -1,4 +1,5 @@
 # Copyright (C) 2019 The Electrum developers
+# Copyright (C) 2018-2024 Dimecoin Developers
 # Distributed under the MIT software license, see the accompanying
 # file LICENCE or http://www.opensource.org/licenses/mit-license.php
 
@@ -134,7 +135,7 @@ def _configure_file_logging(log_directory: pathlib.Path, *, num_files_keep: int)
 
     _delete_old_logs(log_directory, num_files_keep=num_files_keep)
 
-    timestamp = datetime.datetime.utcnow().strftime("%Y%m%dT%H%M%SZ")
+    timestamp = datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%dT%H%M%SZ")
     PID = os.getpid()
     _logfile_path = log_directory / f"electrum_log_{timestamp}_{PID}.log"
 
@@ -343,7 +344,7 @@ def configure_logging(config: 'SimpleConfig', *, log_to_file: Optional[bool] = N
 
     from . import ELECTRUM_VERSION
     from .constants import GIT_REPO_URL
-    _logger.info(f"Electrum version: {ELECTRUM_VERSION} - https://electrum.org - {GIT_REPO_URL}")
+    _logger.info(f"Electrum version: {ELECTRUM_VERSION} - https://www.dimecoinnetwork.com - {GIT_REPO_URL}")
     _logger.info(f"Python version: {sys.version}. On platform: {describe_os_version()}")
     _logger.info(f"Logging to file: {str(_logfile_path)}")
     _logger.info(f"Log filters: verbosity {repr(verbosity)}, verbosity_shortcuts {repr(verbosity_shortcuts)}")

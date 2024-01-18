@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Electrum - lightweight Bitcoin client
+# Electrum-Dime - lightweight Dimecoin client
 # Copyright (2019) The Electrum Developers
 #
 # Permission is hereby granted, free of charge, to any person
@@ -570,9 +570,12 @@ class TxEditor(WindowModalDialog):
             messages.append(_('This payment will be merged with another existing transaction.'))
         # warn if we use multiple change outputs
         num_change = sum(int(o.is_change) for o in self.tx.outputs())
+        num_ismine = sum(int(o.is_mine) for o in self.tx.outputs())
         if num_change > 1:
             messages.append(_('This transaction has {} change outputs.'.format(num_change)))
-        if num_change == 0:
+        # warn if there is no ismine output, as it might be problematic to RBF the tx later.
+        # (though RBF is still possible by adding new inputs, if the wallet has more utxos)
+        if num_ismine == 0:
             messages.append(_('Make sure you pay enough mining fees; you will not be able to bump the fee later.'))
 
         # TODO: warn if we send change back to input address
@@ -683,7 +686,7 @@ class ConfirmTxDialog(TxEditor):
         grid.addWidget(HelpLabel(_("Amount to be sent") + ": ", msg), 0, 0)
         grid.addWidget(self.amount_label, 0, 1)
 
-        msg = _('Bitcoin transactions are in general not free. A transaction fee is paid by the sender of the funds.') + '\n\n'\
+        msg = _('Dimecoin transactions are in general not free. A transaction fee is paid by the sender of the funds.') + '\n\n'\
               + _('The amount of fee can be decided freely by the sender. However, transactions with low fees take more time to be processed.') + '\n\n'\
               + _('A suggested fee is automatically added to this field. You may override it. The suggested fee increases with the size of the transaction.')
 

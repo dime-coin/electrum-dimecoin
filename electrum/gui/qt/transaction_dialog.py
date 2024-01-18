@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 #
-# Electrum - lightweight Bitcoin client
+# Electrum-Dime - lightweight Dimecoin client
 # Copyright (C) 2012 thomasv@gitorious
+# Copyright (C) 2018-2024 Dimecoin Developers
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -50,11 +51,11 @@ from electrum.bitcoin import base_encode, NLOCKTIME_BLOCKHEIGHT_MAX, DummyAddres
 from electrum.i18n import _
 from electrum.plugin import run_hook
 from electrum import simple_config
-from electrum.transaction import SerializationError, Transaction, PartialTransaction, PartialTxInput, TxOutpoint
-from electrum.transaction import TxinDataFetchProgress
+from electrum.transaction import SerializationError, Transaction, PartialTransaction, TxOutpoint, TxinDataFetchProgress
 from electrum.logging import get_logger
 from electrum.util import ShortID, get_asyncio_loop
 from electrum.network import Network
+from electrum.wallet import TxSighashRiskLevel, TxSighashDanger
 
 from . import util
 from .util import (MessageBoxMixin, read_QIcon, Buttons, icon_path,
@@ -63,7 +64,7 @@ from .util import (MessageBoxMixin, read_QIcon, Buttons, icon_path,
                    TRANSACTION_FILE_EXTENSION_FILTER_ONLY_COMPLETE_TX,
                    TRANSACTION_FILE_EXTENSION_FILTER_ONLY_PARTIAL_TX,
                    BlockingWaitingDialog, getSaveFileName, ColorSchemeItem,
-                   get_iconname_qrcode)
+                   get_iconname_qrcode, VLine)
 from .rate_limiter import rate_limited
 from .my_treeview import create_toolbar_with_menu
 
@@ -77,14 +78,15 @@ _logger = get_logger(__name__)
 dialogs = []  # Otherwise python randomly garbage collects the dialogs...
 
 
-
 class TxSizeLabel(QLabel):
     def setAmount(self, byte_size):
         self.setText(('x   %s bytes   =' % byte_size) if byte_size else '')
 
+
 class TxFiatLabel(QLabel):
     def setAmount(self, fiat_fee):
         self.setText(('≈  %s' % fiat_fee) if fiat_fee else '')
+
 
 class QTextBrowserWithDefaultSize(QTextBrowser):
     def __init__(self, width: int = 0, height: int = 0):
@@ -96,8 +98,8 @@ class QTextBrowserWithDefaultSize(QTextBrowser):
     def sizeHint(self):
         return QSize(self._width, self._height)
 
-class TxInOutWidget(QWidget):
 
+class TxInOutWidget(QWidget):
     def __init__(self, main_window: 'ElectrumWindow', wallet: 'Abstract_Wallet'):
         QWidget.__init__(self)
 
@@ -113,9 +115,22 @@ class TxInOutWidget(QWidget):
         self.inputs_textedit.setContextMenuPolicy(Qt.CustomContextMenu)
         self.inputs_textedit.customContextMenuRequested.connect(self.on_context_menu_for_inputs)
 
+        self.sighash_label = QLabel()
+        self.sighash_label.setStyleSheet('font-weight: bold')
+        self.sighash_danger = TxSighashDanger()
+        self.inputs_warning_icon = QLabel()
+        pixmap = QPixmap(icon_path("warning"))
+        pixmap_size = round(2 * char_width_in_lineedit())
+        pixmap = pixmap.scaled(pixmap_size, pixmap_size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        self.inputs_warning_icon.setPixmap(pixmap)
+        self.inputs_warning_icon.setVisible(False)
+
         self.inheader_hbox = QHBoxLayout()
         self.inheader_hbox.setContentsMargins(0, 0, 0, 0)
         self.inheader_hbox.addWidget(self.inputs_header)
+        self.inheader_hbox.addStretch(2)
+        self.inheader_hbox.addWidget(self.sighash_label)
+        self.inheader_hbox.addWidget(self.inputs_warning_icon)
 
         self.txo_color_recv = TxOutputColoring(
             legend=_("Wallet Address"), color=ColorScheme.GREEN, tooltip=_("Wallet receiving address"))
@@ -245,6 +260,13 @@ class TxInOutWidget(QWidget):
                 tcf_shortid=tcf_shortid,
                 short_id=str(txin.short_id), addr=addr, value=txin_value,
             )
+
+        if isinstance(self.tx, PartialTransaction):
+            self.sighash_danger = self.wallet.check_sighash(self.tx)
+            if self.sighash_danger.risk_level >= TxSighashRiskLevel.WEIRD_SIGHASH:
+                self.sighash_label.setText(self.sighash_danger.short_message)
+                self.inputs_warning_icon.setVisible(True)
+                self.inputs_warning_icon.setToolTip(self.sighash_danger.get_long_message())
 
         self.outputs_header.setText(_("Outputs") + ' (%d)'%len(self.tx.outputs()))
         o_text = self.outputs_textedit
@@ -645,6 +667,16 @@ class TxDialog(QDialog, MessageBoxMixin):
             self.update()
             self.main_window.pop_top_level_window(self)
 
+        if self.io_widget.sighash_danger.needs_confirm():
+            if not self.question(
+                msg='\n'.join([
+                    self.io_widget.sighash_danger.get_long_message(),
+                    '',
+                    _('Are you sure you want to sign this transaction?')
+                ]),
+                title=self.io_widget.sighash_danger.short_message,
+            ):
+                return
         self.sign_button.setDisabled(True)
         self.main_window.push_top_level_window(self)
         self.main_window.sign_tx(self.tx, callback=sign_done, external_keypairs=self.external_keypairs)
@@ -771,7 +803,9 @@ class TxDialog(QDialog, MessageBoxMixin):
         self.broadcast_button.setEnabled(tx_details.can_broadcast)
         can_sign = not self.tx.is_complete() and \
             (self.wallet.can_sign(self.tx) or bool(self.external_keypairs))
-        self.sign_button.setEnabled(can_sign)
+        self.sign_button.setEnabled(can_sign and not self.io_widget.sighash_danger.needs_reject())
+        if sh_danger_msg := self.io_widget.sighash_danger.get_long_message():
+            self.sign_button.setToolTip(sh_danger_msg)
         if tx_details.txid:
             self.tx_hash_e.setText(tx_details.txid)
         else:
@@ -861,10 +895,9 @@ class TxDialog(QDialog, MessageBoxMixin):
                         color=ColorScheme.RED.as_color().name(),
                     )
         if isinstance(self.tx, PartialTransaction):
-            risk_of_burning_coins = (can_sign and fee is not None
-                                     and self.wallet.get_warning_for_risk_of_burning_coins_as_fees(self.tx))
-            self.fee_warning_icon.setToolTip(str(risk_of_burning_coins))
-            self.fee_warning_icon.setVisible(bool(risk_of_burning_coins))
+            sh_warning = self.io_widget.sighash_danger.get_long_message()
+            self.fee_warning_icon.setToolTip(str(sh_warning))
+            self.fee_warning_icon.setVisible(can_sign and bool(sh_warning))
         self.fee_label.setText(fee_str)
         self.size_label.setText(size_str)
         if ln_amount is None or ln_amount == 0:
@@ -930,11 +963,7 @@ class TxDialog(QDialog, MessageBoxMixin):
         hbox_stats.addLayout(vbox_left, 50)
 
         # vertical line separator
-        line_separator = QFrame()
-        line_separator.setFrameShape(QFrame.VLine)
-        line_separator.setFrameShadow(QFrame.Sunken)
-        line_separator.setLineWidth(1)
-        hbox_stats.addWidget(line_separator)
+        hbox_stats.addWidget(VLine())
 
         # right column
         vbox_right = QVBoxLayout()

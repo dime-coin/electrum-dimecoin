@@ -16,6 +16,7 @@ from electrum.keystore import bip44_derivation, bip39_to_seed, purpose48_derivat
 from electrum.plugin import run_hook, HardwarePluginLibraryUnavailable
 from electrum.storage import StorageReadWriteError
 from electrum.util import WalletFileException, get_new_wallet_name, UserFacingException, InvalidPassword
+from electrum.util import is_subpath
 from electrum.wallet import wallet_types
 from .wizard import QEAbstractWizard, WizardComponent
 from electrum.logging import get_logger, Logger
@@ -54,8 +55,7 @@ class QENewWalletWizard(NewWalletWizard, QEAbstractWizard, MessageBoxMixin):
     def __init__(self, config: 'SimpleConfig', app: 'QElectrumApplication', plugins: 'Plugins', daemon: Daemon, path, *, start_viewstate=None):
         NewWalletWizard.__init__(self, daemon, plugins)
         QEAbstractWizard.__init__(self, config, app, start_viewstate=start_viewstate)
-
-        self.setWindowTitle(_('Create/Restore wallet'))
+        self.window_title = _('Create/Restore wallet')
 
         self._path = path
         self._password = None
@@ -298,12 +298,23 @@ class WCWalletName(WizardComponent, Logger):
         self.layout().addStretch(1)
 
         temp_storage = None  # type: Optional[WalletStorage]
-        wallet_folder = os.path.dirname(path)
+        datadir_wallet_folder = self.wizard.config.get_datadir_wallet_path()
+
+        def relative_path(path):
+            new_path = path
+            try:
+                if is_subpath(path, datadir_wallet_folder):
+                    # below datadir_wallet_path, make relative
+                    commonpath = os.path.commonpath([path, datadir_wallet_folder])
+                    new_path = os.path.relpath(path, commonpath)
+            except ValueError:
+                pass
+            return new_path
 
         def on_choose():
-            _path, __ = QFileDialog.getOpenFileName(self, "Select your wallet file", wallet_folder)
+            _path, __ = QFileDialog.getOpenFileName(self, "Select your wallet file", datadir_wallet_folder)
             if _path:
-                self.name_e.setText(_path)
+                self.name_e.setText(relative_path(_path))
 
         def on_filename(filename):
             # FIXME? "filename" might contain ".." (etc) and hence sketchy path traversals are possible
@@ -314,7 +325,7 @@ class WCWalletName(WizardComponent, Logger):
             self.wallet_is_open = False
             self.wallet_needs_hw_unlock = False
             if filename:
-                _path = os.path.join(wallet_folder, filename)
+                _path = os.path.join(datadir_wallet_folder, filename)
                 wallet_from_memory = self.wizard._daemon.get_wallet(_path)
                 try:
                     if wallet_from_memory:
@@ -352,6 +363,8 @@ class WCWalletName(WizardComponent, Logger):
                           + _("Press 'Finish' to create/focus window.")
             if msg is None:
                 msg = _('Cannot read file')
+            if filename and os.path.isabs(relative_path(_path)):
+                msg += '\n\n' + _('Note: this wallet file is outside the default wallets folder.')
             msg_label.setText(msg)
             widget_create_new.setVisible(bool(temp_storage and temp_storage.file_exists()))
             if user_needs_to_enter_password:
@@ -366,15 +379,14 @@ class WCWalletName(WizardComponent, Logger):
 
         button.clicked.connect(on_choose)
         button_create_new.clicked.connect(
-            lambda: self.name_e.setText(get_new_wallet_name(wallet_folder)))  # FIXME get_new_wallet_name might raise
+            lambda: self.name_e.setText(get_new_wallet_name(datadir_wallet_folder)))  # FIXME get_new_wallet_name might raise
         self.name_e.textChanged.connect(on_filename)
-        self.name_e.setText(os.path.basename(path))
+        self.name_e.setText(relative_path(path))
 
     def apply(self):
         if self.wallet_exists:
             # use full path
-            path = self.wizard._path
-            wallet_folder = os.path.dirname(path)
+            wallet_folder = self.wizard.config.get_datadir_wallet_path()
             self.wizard_data['wallet_name'] = os.path.join(wallet_folder, self.name_e.text())
         else:
             self.wizard_data['wallet_name'] = self.name_e.text()
@@ -392,7 +404,7 @@ class WCWalletType(WizardComponent):
             ('standard',  _('Standard wallet')),
             ('2fa',       _('Wallet with two-factor authentication')),
             ('multisig',  _('Multi-signature wallet')),
-            ('imported',  _('Import Bitcoin addresses or private keys')),
+            ('imported',  _('Import Dimecoin addresses or private keys')),
         ]
         choices = [pair for pair in wallet_kinds if pair[0] in wallet_types]
 
@@ -922,9 +934,9 @@ class WCMultisig(WizardComponent):
 
 class WCImport(WizardComponent):
     def __init__(self, parent, wizard):
-        WizardComponent.__init__(self, parent, wizard, title=_('Import Bitcoin Addresses or Private Keys'))
+        WizardComponent.__init__(self, parent, wizard, title=_('Import Dimecoin Addresses or Private Keys'))
         message = _(
-            'Enter a list of Bitcoin addresses (this will create a watching-only wallet), or a list of private keys.')
+            'Enter a list of Dimecoin addresses (this will create a watching-only wallet), or a list of private keys.')
         header_layout = QHBoxLayout()
         label = WWLabel(message)
         label.setMinimumWidth(400)

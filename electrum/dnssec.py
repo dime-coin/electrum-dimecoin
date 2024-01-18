@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 #
-# Electrum - lightweight Bitcoin client
+# Electrum-Dime - lightweight Dimecoin client
 # Copyright (C) 2015 Thomas Voegtlin
+# Copyright (C) 2018-2024 Dimecoin Developers
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -137,6 +138,7 @@ def _get_and_validate(ns, url, _type):
 
 
 def query(url, rtype):
+    # FIXME this method is not using the network proxy. (although the proxy might not support UDP?)
     # 8.8.8.8 is Google's public DNS server
     nameservers = ['8.8.8.8']
     ns = nameservers[0]

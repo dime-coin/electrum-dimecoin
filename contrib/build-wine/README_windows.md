@@ -1,4 +1,4 @@
-# Running Electrum from source on Windows (development version)
+# Running Electrum-Dime from source on Windows (development version)
 
 ## Prerequisites
 
@@ -9,7 +9,7 @@
 
 ### 1. Check out the code from GitHub:
 ```
-> git clone https://github.com/spesmilo/electrum.git
+> git clone https://github.com/dime-coin/electrum-dimecoin.git
 > cd electrum
 > git submodule update --init
 ```
@@ -23,7 +23,7 @@ Run install (this should install most dependencies):
 
 [libsecp256k1](https://github.com/bitcoin-core/secp256k1) is a required dependency.
 This is a C library, which you need to compile yourself.
-Electrum needs a dll, named `libsecp256k1-0.dll` (or newer `libsecp256k1-*.dll`),
+Electrum-Dime needs a dll, named `libsecp256k1-0.dll` (or newer `libsecp256k1-*.dll`),
 placed into the inner `electrum/` folder.
 
 For Unix-like systems, the (`contrib/make_libsecp256k1.sh`) script does this for you,

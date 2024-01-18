@@ -55,27 +55,27 @@ class QEWallet(AuthMixin, QObject, QtEventListener):
     dataChanged = pyqtSignal()
 
     balanceChanged = pyqtSignal()
-    requestStatusChanged = pyqtSignal([str,int], arguments=['key','status'])
+    requestStatusChanged = pyqtSignal([str, int], arguments=['key', 'status'])
     requestCreateSuccess = pyqtSignal([str], arguments=['key'])
     requestCreateError = pyqtSignal([str], arguments=['error'])
-    invoiceStatusChanged = pyqtSignal([str,int], arguments=['key','status'])
+    invoiceStatusChanged = pyqtSignal([str, int], arguments=['key', 'status'])
     invoiceCreateSuccess = pyqtSignal()
-    invoiceCreateError = pyqtSignal([str,str], arguments=['code','error'])
+    invoiceCreateError = pyqtSignal([str, str], arguments=['code', 'error'])
     paymentAuthRejected = pyqtSignal()
     paymentSucceeded = pyqtSignal([str], arguments=['key'])
-    paymentFailed = pyqtSignal([str,str], arguments=['key','reason'])
+    paymentFailed = pyqtSignal([str, str], arguments=['key', 'reason'])
     requestNewPassword = pyqtSignal()
     signSucceeded = pyqtSignal([str], arguments=['txid'])
     signFailed = pyqtSignal([str], arguments=['message'])
     broadcastSucceeded = pyqtSignal([str], arguments=['txid'])
-    broadcastFailed = pyqtSignal([str,str,str], arguments=['txid','code','reason'])
+    broadcastFailed = pyqtSignal([str, str, str], arguments=['txid', 'code', 'reason'])
     saveTxSuccess = pyqtSignal([str], arguments=['txid'])
-    saveTxError = pyqtSignal([str,str,str], arguments=['txid', 'code', 'message'])
+    saveTxError = pyqtSignal([str, str, str], arguments=['txid', 'code', 'message'])
     importChannelBackupFailed = pyqtSignal([str], arguments=['message'])
     labelsUpdated = pyqtSignal()
     otpRequested = pyqtSignal()
     otpSuccess = pyqtSignal()
-    otpFailed = pyqtSignal([str,str], arguments=['code','message'])
+    otpFailed = pyqtSignal([str, str], arguments=['code', 'message'])
     peersUpdated = pyqtSignal()
     seedRetrieved = pyqtSignal()
 
@@ -103,6 +103,7 @@ class QEWallet(AuthMixin, QObject, QtEventListener):
         self._totalbalance = QEAmount()
         self._lightningcanreceive = QEAmount()
         self._lightningcansend = QEAmount()
+        self._lightningbalancefrozen = QEAmount()
 
         self._seed = ''
 
@@ -366,7 +367,7 @@ class QEWallet(AuthMixin, QObject, QtEventListener):
 
     @pyqtProperty(str, notify=dataChanged)
     def seedType(self):
-        return self.wallet.db.get('seed_type')
+        return self.wallet.get_seed_type()
 
     @pyqtProperty(bool, notify=dataChanged)
     def isWatchOnly(self):
@@ -462,6 +463,12 @@ class QEWallet(AuthMixin, QObject, QtEventListener):
         return self._lightningbalance
 
     @pyqtProperty(QEAmount, notify=balanceChanged)
+    def lightningBalanceFrozen(self):
+        if self.isLightning:
+            self._lightningbalancefrozen.satsInt = int(self.wallet.lnworker.get_balance(frozen=True))
+        return self._lightningbalancefrozen
+
+    @pyqtProperty(QEAmount, notify=balanceChanged)
     def totalBalance(self):
         total = self.confirmedBalance.satsInt + self.lightningBalance.satsInt
         self._totalbalance.satsInt = total
@@ -512,7 +519,8 @@ class QEWallet(AuthMixin, QObject, QtEventListener):
 
     def do_sign(self, tx, broadcast):
         try:
-            tx = self.wallet.sign_transaction(tx, self.password)
+            # ignore_warnings=True, because UI checks and asks user confirmation itself
+            tx = self.wallet.sign_transaction(tx, self.password, ignore_warnings=True)
         except BaseException as e:
             self._logger.error(f'{e!r}')
             self.signFailed.emit(str(e))

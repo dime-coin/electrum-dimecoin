@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 #
-# Electrum - lightweight Bitcoin client
+# Electrum-Dime - lightweight Dimecoin client
 # Copyright (C) 2019 The Electrum Developers
+# Copyright (C) 2018-2024 Dimecoin Developers
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -226,7 +227,7 @@ class JsonDB(Logger):
         self.data = StoredDict(data, self, [])
         # write file in case there was a db upgrade
         if self.storage and self.storage.file_exists():
-            self._write()
+            self.write_and_force_consolidation()
 
     def load_data(self, s:str) -> dict:
         """ overloaded in wallet_db """
@@ -381,10 +382,10 @@ class JsonDB(Logger):
 
     @locked
     def write(self):
-        if not self.storage.file_exists()\
-           or self.storage.is_encrypted()\
-           or self.storage.needs_consolidation():
-            self._write()
+        if (not self.storage.file_exists()
+                or self.storage.is_encrypted()
+                or self.storage.needs_consolidation()):
+            self.write_and_force_consolidation()
         else:
             self._append_pending_changes()
 
@@ -402,7 +403,7 @@ class JsonDB(Logger):
 
     @locked
     @profiler
-    def _write(self):
+    def write_and_force_consolidation(self):
         if threading.current_thread().daemon:
             raise Exception('daemon thread cannot write db')
         if not self.modified():

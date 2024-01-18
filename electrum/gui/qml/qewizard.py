@@ -107,6 +107,15 @@ class QENewWalletWizard(NewWalletWizard, QEAbstractWizard):
     def isMatchingSeed(self, seed, seed_again):
         return mnemonic.is_matching_seed(seed=seed, seed_again=seed_again)
 
+    @pyqtSlot(str, str, str, result='QVariantMap')
+    def verifySeed(self, seed, seed_variant, wallet_type='standard'):
+        seed_valid, seed_type, validation_message = self.validate_seed(seed, seed_variant, wallet_type)
+        return {
+            'valid': seed_valid,
+            'type': seed_type,
+            'message': validation_message
+        }
+
     @pyqtSlot('QJSValue', bool, str)
     def createStorage(self, js_data, single_password_enabled, single_password):
         self._logger.info('Creating wallet from wizard data')
@@ -138,8 +147,7 @@ class QEServerConnectWizard(ServerConnectWizard, QEAbstractWizard):
 
         # attach view names
         self.navmap_merge({
-            'autoconnect': {'gui': 'WCAutoConnect'},
-            'proxy_ask': {'gui': 'WCProxyAsk'},
+            'welcome': {'gui': 'WCWelcome'},
             'proxy_config': {'gui': 'WCProxyConfig'},
             'server_config': {'gui': 'WCServerConfig'},
         })

@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 #
-# Electrum - lightweight Bitcoin client
+# Electrum-Dime - lightweight Dimecoin client
 # Copyright (C) 2018 The Electrum developers
+# Copyright (C) 2018-2024 Dimecoin Developers
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -383,7 +384,7 @@ POINT_AT_INFINITY = ECPubkey(None)
 def msg_magic(message: bytes) -> bytes:
     from .bitcoin import var_int
     length = bfh(var_int(len(message)))
-    return b"\x18Bitcoin Signed Message:\n" + length + message
+    return b"\x19Dimecoin Signed Message:\n" + length + message
 
 
 def verify_signature(pubkey: bytes, sig: bytes, h: bytes) -> bool:

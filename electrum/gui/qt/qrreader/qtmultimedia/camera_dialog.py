@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 #
-# Electron Cash - lightweight Bitcoin client
+# Electrum-Dime - lightweight Dimecoin client
 # Copyright (C) 2019 Axel Gembe <derago@gmail.com>
+# Copyright (C) 2018-2024 Dimecoin Developers
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -147,7 +148,7 @@ class QrReaderCameraDialog(Logger, MessageBoxMixin, QDialog):
         self.image_effect = ImageGraphicsEffect(self, self.crop_blur_effect)
 
 
-        # Note these should stay as queued connections becasue we use the idiom
+        # Note these should stay as queued connections because we use the idiom
         # self.reject() and self.accept() in this class to kill the scan --
         # and we do it from within callback functions. If you don't use
         # queued connections here, bad things can happen.

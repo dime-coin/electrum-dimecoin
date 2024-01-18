@@ -1,25 +1,17 @@
-# Electrum - Lightweight Bitcoin client
+# Electrum-Dime - Lightweight Dimecoin Client
 
 ```
 Licence: MIT Licence
-Author: Thomas Voegtlin
+Author: Dimecoin Developers; Based on Electrum by Thomas Voegtlin
 Language: Python (>= 3.8)
-Homepage: https://electrum.org/
+Homepage: https://dimecoinnetwork.com/ ; original Electrum Homepage here at https://electrum.org/
 ```
-
-[![Build Status](https://api.cirrus-ci.com/github/spesmilo/electrum.svg?branch=master)](https://cirrus-ci.com/github/spesmilo/electrum)
-[![Test coverage statistics](https://coveralls.io/repos/github/spesmilo/electrum/badge.svg?branch=master)](https://coveralls.io/github/spesmilo/electrum?branch=master)
-[![Help translate Electrum online](https://d322cqt584bo4o.cloudfront.net/electrum/localized.svg)](https://crowdin.com/project/electrum)
-
-
 ## Getting started
 
-_(If you've come here looking to simply run Electrum,
-[you may download it here](https://electrum.org/#download).)_
+_(If you've come here looking to simply run Electrum-Dime,
+[you may download it here](https://https://dimecoinnetwork.com/wallets).)_
 
-Electrum itself is pure Python, and so are most of the required dependencies,
-but not everything. The following sections describe how to run from source, but here
-is a TL;DR:
+Electrum-Dime is entirely written in Python, as are most of its necessary dependencies. However, not all of them are Python-based. The following sections describe how to run from source, but here is a TL;DR:
 
 ```
 $ sudo apt-get install libsecp256k1-dev
@@ -61,21 +53,21 @@ If you would like hardware wallet support,
 ### Running from tar.gz
 
 If you downloaded the official package (tar.gz), you can run
-Electrum from its root directory without installing it on your
+Electrum-Dime from its root directory without installing it on your
 system; all the pure python dependencies are included in the 'packages'
-directory. To run Electrum from its root directory, just do:
+directory. To run Electrum-Dime from its root directory, just do:
 ```
 $ ./run_electrum
 ```
 
-You can also install Electrum on your system, by running this command:
+You can also install Electrum-Dime on your system, by running this command:
 ```
 $ sudo apt-get install python3-setuptools python3-pip
 $ python3 -m pip install --user .
 ```
 
 This will download and install the Python dependencies used by
-Electrum instead of using the 'packages' directory.
+Electrum-Dime instead of using the 'packages' directory.
 It will also place an executable named `electrum` in `~/.local/bin`,
 so make sure that is on your `PATH` variable.
 
@@ -87,7 +79,7 @@ and [for macOS](contrib/osx/README_macos.md))_
 
 Check out the code from GitHub:
 ```
-$ git clone https://github.com/spesmilo/electrum.git
+$ git clone https://github.com/dime-coin/electrum-dimecoin.git
 $ cd electrum
 $ git submodule update --init
 ```
@@ -103,7 +95,7 @@ $ sudo apt-get install python3-requests gettext qttools5-dev-tools
 $ ./contrib/pull_locale
 ```
 
-Finally, to start Electrum:
+Finally, to start Electrum-Dime:
 ```
 $ ./run_electrum
 ```
@@ -135,9 +127,7 @@ Any help testing the software, reporting or fixing bugs, reviewing pull requests
 and recent changes, writing tests, or helping with outstanding issues is very welcome.
 Implementing new features, or improving/refactoring the codebase, is of course
 also welcome, but to avoid wasted effort, especially for larger changes,
-we encourage discussing these on the issue tracker or IRC first.
+we encourage discussing these on the issue tracker or Telegram first.
 
-Besides [GitHub](https://github.com/spesmilo/electrum),
-most communication about Electrum development happens on IRC, in the
-`#electrum` channel on Libera Chat. The easiest way to participate on IRC is
-with the web client, [web.libera.chat](https://web.libera.chat/#electrum).
+Besides [GitHub](https://github.com/dime-coin/electrum-dimecoin),
+most communication about Electrum-Dime development happens on [Telegram](https://t.me/Dimecoin/1), in the `General` channel. 

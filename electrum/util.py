@@ -1,5 +1,6 @@
-# Electrum - lightweight Bitcoin client
+# Electrum-Dime - lightweight Dimecoin client
 # Copyright (C) 2011 Thomas Voegtlin
+# Copyright (C) 2018-2024 Dimecoin Developers
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -26,7 +27,7 @@ import os, sys, re, json
 from collections import defaultdict, OrderedDict
 from typing import (NamedTuple, Union, TYPE_CHECKING, Tuple, Optional, Callable, Any,
                     Sequence, Dict, Generic, TypeVar, List, Iterable, Set, Awaitable)
-from datetime import datetime
+from datetime import datetime, timezone
 import decimal
 from decimal import Decimal
 import traceback
@@ -86,11 +87,11 @@ def all_subclasses(cls) -> Set:
 ca_path = certifi.where()
 
 
-base_units = {'DIME':3, 'bits':2, 'sat':0}
+base_units = {'DIME':5, 'bits':2, 'sat':0}
 base_units_inverse = inv_dict(base_units)
 base_units_list = ['DIME', 'mDIME', 'bits', 'sat']  # list(dict) does not guarantee order
 
-DECIMAL_POINT_DEFAULT = 3  # mBTC
+DECIMAL_POINT_DEFAULT = 5  
 
 
 class UnknownBaseUnit(Exception): pass
@@ -202,6 +203,14 @@ class UserFacingException(Exception):
 
 
 class InvoiceError(UserFacingException): pass
+
+
+class NetworkOfflineException(UserFacingException):
+    """Can be raised if we are running in offline mode (--offline flag)
+    and the user requests an operation that requires the network.
+    """
+    def __str__(self):
+        return _("You are offline.")
 
 
 # Throw this exception to unwind the stack like when an error occurs.
@@ -800,10 +809,13 @@ def quantize_feerate(fee) -> Union[None, Decimal, int]:
     return Decimal(fee).quantize(_feerate_quanta, rounding=decimal.ROUND_HALF_DOWN)
 
 
-def timestamp_to_datetime(timestamp: Union[int, float, None]) -> Optional[datetime]:
+def timestamp_to_datetime(timestamp: Union[int, float, None], *, utc: bool = False) -> Optional[datetime]:
     if timestamp is None:
         return None
-    return datetime.fromtimestamp(timestamp)
+    tz = None
+    if utc:
+        tz = timezone.utc
+    return datetime.fromtimestamp(timestamp, tz=tz)
 
 
 def format_time(timestamp: Union[int, float, None]) -> str:
@@ -889,70 +901,18 @@ def age(
             return _("in over {} years").format(round(distance_in_minutes / 525600))
 
 mainnet_block_explorers = {
-    '3xpl.com': ('https://3xpl.com/bitcoin/',
-                        {'tx': 'transaction/', 'addr': 'address/'}),
-    'Bitflyer.jp': ('https://chainflyer.bitflyer.jp/',
-                        {'tx': 'Transaction/', 'addr': 'Address/'}),
-    'Blockchain.info': ('https://blockchain.com/btc/',
-                        {'tx': 'tx/', 'addr': 'address/'}),
-    'Blockstream.info': ('https://blockstream.info/',
-                        {'tx': 'tx/', 'addr': 'address/'}),
-    'Bitaps.com': ('https://btc.bitaps.com/',
-                        {'tx': '', 'addr': ''}),
-    'BTC.com': ('https://btc.com/',
-                        {'tx': '', 'addr': ''}),
-    'Chain.so': ('https://www.chain.so/',
-                        {'tx': 'tx/BTC/', 'addr': 'address/BTC/'}),
-    'Insight.is': ('https://insight.bitpay.com/',
-                        {'tx': 'tx/', 'addr': 'address/'}),
-    'BlockCypher.com': ('https://live.blockcypher.com/btc/',
-                        {'tx': 'tx/', 'addr': 'address/'}),
-    'Blockchair.com': ('https://blockchair.com/bitcoin/',
-                        {'tx': 'transaction/', 'addr': 'address/'}),
-    'blockonomics.co': ('https://www.blockonomics.co/',
-                        {'tx': 'api/tx?txid=', 'addr': '#/search?q='}),
-    'mempool.space': ('https://mempool.space/',
-                        {'tx': 'tx/', 'addr': 'address/'}),
-    'mempool.emzy.de': ('https://mempool.emzy.de/',
-                        {'tx': 'tx/', 'addr': 'address/'}),
-    'OXT.me': ('https://oxt.me/',
-                        {'tx': 'transaction/', 'addr': 'address/'}),
-    'mynode.local': ('http://mynode.local:3002/',
-                        {'tx': 'tx/', 'addr': 'address/'}),
-    'system default': ('blockchain:/',
-                        {'tx': 'tx/', 'addr': 'address/'}),
+    'chainz.cryptoID': ('https://chainz.cryptoid.info/dime/',
+                        {'tx': 'tx.dws?', 'address.dws?': 'addr'}),
+    'system default': ('https://chainz.cryptoid.info/dime/',
+                        {'tx': 'tx.dws?', 'address.dws?': 'addr'}),
 }
 
 testnet_block_explorers = {
-    'Bitaps.com': ('https://tbtc.bitaps.com/',
-                       {'tx': '', 'addr': ''}),
-    'BlockCypher.com': ('https://live.blockcypher.com/btc-testnet/',
-                       {'tx': 'tx/', 'addr': 'address/'}),
-    'Blockchain.info': ('https://www.blockchain.com/btc-testnet/',
-                       {'tx': 'tx/', 'addr': 'address/'}),
-    'Blockstream.info': ('https://blockstream.info/testnet/',
-                        {'tx': 'tx/', 'addr': 'address/'}),
-    'mempool.space': ('https://mempool.space/testnet/',
-                        {'tx': 'tx/', 'addr': 'address/'}),
-    'smartbit.com.au': ('https://testnet.smartbit.com.au/',
-                       {'tx': 'tx/', 'addr': 'address/'}),
-    'system default': ('blockchain://000000000933ea01ad0ee984209779baaec3ced90fa3f408719526f8d77f4943/',
-                       {'tx': 'tx/', 'addr': 'address/'}),
+
 }
 
 signet_block_explorers = {
-    'bc-2.jp': ('https://explorer.bc-2.jp/',
-                        {'tx': 'tx/', 'addr': 'address/'}),
-    'mempool.space': ('https://mempool.space/signet/',
-                        {'tx': 'tx/', 'addr': 'address/'}),
-    'bitcoinexplorer.org': ('https://signet.bitcoinexplorer.org/',
-                       {'tx': 'tx/', 'addr': 'address/'}),
-    'wakiyamap.dev': ('https://signet-explorer.wakiyamap.dev/',
-                       {'tx': 'tx/', 'addr': 'address/'}),
-    'ex.signet.bublina.eu.org': ('https://ex.signet.bublina.eu.org/',
-                       {'tx': 'tx/', 'addr': 'address/'}),
-    'system default': ('blockchain:/',
-                       {'tx': 'tx/', 'addr': 'address/'}),
+
 }
 
 _block_explorer_default_api_loc = {'tx': 'tx/', 'addr': 'address/'}
@@ -1268,7 +1228,7 @@ def make_aiohttp_session(proxy: Optional[dict], headers=None, timeout=None):
             port=int(proxy['port']),
             username=proxy.get('user', None),
             password=proxy.get('password', None),
-            rdns=True,
+            rdns=True,  # needed to prevent DNS leaks over proxy
             ssl=ssl_context,
         )
     else:
@@ -1498,9 +1458,7 @@ def detect_tor_socks_proxy() -> Optional[Tuple[str, int]]:
 
 def is_tor_socks_port(host: str, port: int) -> bool:
     try:
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-            s.settimeout(1.0)
-            s.connect((host, port))
+        with socket.create_connection((host, port), timeout=10) as s:
             # mimic "tor-resolve 0.0.0.0".
             # see https://github.com/spesmilo/electrum/issues/7317#issuecomment-1369281075
             # > this is a socks5 handshake, followed by a socks RESOLVE request as defined in
@@ -1707,6 +1665,7 @@ def list_enabled_bits(x: int) -> Sequence[int]:
 
 
 def resolve_dns_srv(host: str):
+    # FIXME this method is not using the network proxy. (although the proxy might not support UDP?)
     srv_records = dns.resolver.resolve(host, 'SRV')
     # priority: prefer lower
     # weight: tie breaker; prefer higher
@@ -1885,6 +1844,8 @@ class NetworkRetryManager(Generic[_NetAddrType]):
 
 
 class MySocksProxy(aiorpcx.SOCKSProxy):
+    # note: proxy will not leak DNS as create_connection()
+    # sets (local DNS) resolve=False by default
 
     async def open_connection(self, host=None, port=None, **kwargs):
         loop = asyncio.get_running_loop()

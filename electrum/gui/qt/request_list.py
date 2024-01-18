@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 #
-# Electrum - lightweight Bitcoin client
+# Electrum-Dime - lightweight Dimecoin client
 # Copyright (C) 2015 Thomas Voegtlin
+# Copyright (C) 2018-2024 Dimecoin Developers
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -198,9 +199,9 @@ class RequestList(MyTreeView):
         menu = QMenu(self)
         copy_menu = self.add_copy_menu(menu, idx)
         if req.get_address():
-            copy_menu.addAction(_("Address"), lambda: self.main_window.do_copy(req.get_address(), title='Bitcoin Address'))
+            copy_menu.addAction(_("Address"), lambda: self.main_window.do_copy(req.get_address(), title='Dimecoin Address'))
         if URI := self.wallet.get_request_URI(req):
-            copy_menu.addAction(_("Bitcoin URI"), lambda: self.main_window.do_copy(URI, title='Bitcoin URI'))
+            copy_menu.addAction(_("Dimecoin URI"), lambda: self.main_window.do_copy(URI, title='Dimecoin URI'))
         if req.is_lightning():
             copy_menu.addAction(_("Lightning Request"), lambda: self.main_window.do_copy(self.wallet.get_bolt11_invoice(req), title='Lightning Request'))
         #if 'view_url' in req:

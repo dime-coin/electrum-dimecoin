@@ -89,7 +89,7 @@ Pane {
                         }
                         Label {
                             Layout.fillWidth: true
-                            text: qsTr('Add thousands separators to bitcoin amounts')
+                            text: qsTr('Add thousands separators to dimecoin amounts')
                             wrapMode: Text.Wrap
                         }
                     }
@@ -368,6 +368,24 @@ Pane {
                             wrapMode: Text.Wrap
                         }
                     }
+
+                    RowLayout {
+                        Layout.columnSpan: 2
+                        Layout.fillWidth: true
+                        spacing: 0
+                        Switch {
+                            id: alwaysAllowScreenshots
+                            onCheckedChanged: {
+                                if (activeFocus)
+                                    Config.alwaysAllowScreenshots = checked
+                            }
+                        }
+                        Label {
+                            Layout.fillWidth: true
+                            text: qsTr('Always allow screenshots')
+                            wrapMode: Text.Wrap
+                        }
+                    }
                 }
 
             }
@@ -392,6 +410,7 @@ Pane {
         useTrampolineRouting.checked = !Config.useGossip
         useFallbackAddress.checked = Config.useFallbackAddress
         enableDebugLogs.checked = Config.enableDebugLogs
+        alwaysAllowScreenshots.checked = Config.alwaysAllowScreenshots
         useRecoverableChannels.checked = Config.useRecoverableChannels
         syncLabels.checked = AppController.isPluginEnabled('labels')
     }

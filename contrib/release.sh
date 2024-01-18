@@ -59,13 +59,13 @@ fi
 
 export SSHUSER="$GPGUSER"
 RELEASEMANAGER=""
-if [ "$GPGUSER" == "ThomasV" ]; then
-    PUBKEY="--local-user 6694D8DE7BE8EE5631BED9502BD5824B7F9470E6"
-    export SSHUSER=thomasv
+if [ "$GPGUSER" == "Dhop14" ]; then
+    PUBKEY="--local-user A3E6459E3707BC46849AC0AA964DA787DBC83054"
+    export SSHUSER=dhop14
     RELEASEMANAGER=1
-elif [ "$GPGUSER" == "sombernight_releasekey" ]; then
-    PUBKEY="--local-user 0EEDCFD5CAFB459067349B23CA9EEEC43DF911DC"
-    export SSHUSER=sombernight
+elif [ "$GPGUSER" == "prettyflyforabeeguy" ]; then
+    PUBKEY="--local-user XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+    export SSHUSER=prettyflyforabeeguy
 fi
 
 
@@ -80,7 +80,9 @@ fi
 
 
 VERSION=$("$CONTRIB"/print_electrum_version.py)
+APK_VERSION=$("$CONTRIB"/print_electrum_version.py APK_VERSION)
 info "VERSION: $VERSION"
+info "APK_VERSION: $APK_VERSION"
 REV=$(git describe --tags)
 info "REV: $REV"
 COMMIT=$(git rev-parse HEAD)
@@ -97,7 +99,7 @@ fi
 set -x
 
 # create tarball
-tarball="Electrum-$VERSION.tar.gz"
+tarball="Electrum-Dime-$VERSION.tar.gz"
 if test -f "dist/$tarball"; then
     info "file exists: $tarball"
 else
@@ -105,7 +107,7 @@ else
 fi
 
 # create source-only tarball
-srctarball="Electrum-sourceonly-$VERSION.tar.gz"
+srctarball="Electrum-Dime-sourceonly-$VERSION.tar.gz"
 if test -f "dist/$srctarball"; then
     info "file exists: $srctarball"
 else
@@ -113,7 +115,7 @@ else
 fi
 
 # appimage
-appimage="electrum-$REV-x86_64.AppImage"
+appimage="electrum-dime-$REV-x86_64.AppImage"
 if test -f "dist/$appimage"; then
     info "file exists: $appimage"
 else
@@ -122,9 +124,9 @@ fi
 
 
 # windows
-win1="electrum-$REV.exe"
-win2="electrum-$REV-portable.exe"
-win3="electrum-$REV-setup.exe"
+win1="electrum-dime-$REV.exe"
+win2="electrum-dime-$REV-portable.exe"
+win3="electrum-dime-$REV-setup.exe"
 if test -f "dist/$win1"; then
     info "file exists: $win1"
 else
@@ -145,28 +147,29 @@ else
 fi
 
 # android
-apk1="Electrum-$VERSION.0-armeabi-v7a-release.apk"
-apk1_unsigned="Electrum-$VERSION.0-armeabi-v7a-release-unsigned.apk"
-apk2="Electrum-$VERSION.0-arm64-v8a-release.apk"
-apk2_unsigned="Electrum-$VERSION.0-arm64-v8a-release-unsigned.apk"
-apk3="Electrum-$VERSION.0-x86_64-release.apk"
-apk3_unsigned="Electrum-$VERSION.0-x86_64-release-unsigned.apk"
-if test -f "dist/$apk1"; then
-    info "file exists: $apk1"
-else
-    if [ ! -z "$RELEASEMANAGER" ] ; then
-        ./contrib/android/build.sh qml all release $password
+apk1="Electrum-Dime$APK_VERSION-armeabi-v7a-release.apk"
+apk2="Electrum-Dime$APK_VERSION-arm64-v8a-release.apk"
+apk3="Electrum-Dime$APK_VERSION-x86_64-release.apk"
+for arch in armeabi-v7a arm64-v8a x86_64
+do
+    apk="Electrum-Dime$APK_VERSION-$arch-release.apk"
+    apk_unsigned="Electrum-Dime$APK_VERSION-$arch-release-unsigned.apk"
+    if test -f "dist/$apk"; then
+        info "file exists: $apk"
     else
-        ./contrib/android/build.sh qml all release-unsigned
-        mv "dist/$apk1_unsigned" "dist/$apk1"
-        mv "dist/$apk2_unsigned" "dist/$apk2"
-        mv "dist/$apk3_unsigned" "dist/$apk3"
+        info "file does not exists: $apk"
+        if [ ! -z "$RELEASEMANAGER" ] ; then
+            ./contrib/android/build.sh qml $arch release $password
+        else
+            ./contrib/android/build.sh qml $arch release-unsigned
+            mv "dist/$apk_unsigned" "dist/$apk"
+        fi
     fi
-fi
+done
 
 # the macos binary is built on a separate machine.
 # the file that needs to be copied over is the codesigned release binary (regardless of builder role)
-dmg=electrum-$VERSION.dmg
+dmg="electrum-dime-$VERSION.dmg"
 if ! test -f "dist/$dmg"; then
     if [ ! -z "$RELEASEMANAGER" ] ; then  # RM
         fail "dmg is missing, aborting. Please build and codesign the dmg on a mac and copy it over."

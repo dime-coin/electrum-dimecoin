@@ -1,4 +1,5 @@
 # Copyright (C) 2022 The Electrum developers
+# Copyright (C) 2018-2024 Dimecoin Developers
 # Distributed under the MIT software license, see the accompanying
 # file LICENCE or http://www.opensource.org/licenses/mit-license.php
 
@@ -66,7 +67,7 @@ class SendTab(QWidget, MessageBoxMixin, Logger):
         msg = (_("Recipient of the funds.")
                + "\n\n"
                + _("This field can contain:") + "\n"
-               + _("- a Bitcoin address or BIP21 URI") + "\n"
+               + _("- a Dimecoin address or BIP21 URI") + "\n"
                + _("- a Lightning invoice") + "\n"
                + _("- a label from your list of contacts") + "\n"
                + _("- an openalias") + "\n"
@@ -610,7 +611,7 @@ class SendTab(QWidget, MessageBoxMixin, Logger):
 
         for o in outputs:
             if o.scriptpubkey is None:
-                self.show_error(_('Bitcoin Address is None'))
+                self.show_error(_('Dimecoin Address is None'))
                 return True
             if o.value is None:
                 self.show_error(_('Invalid Amount'))
@@ -788,7 +789,7 @@ class SendTab(QWidget, MessageBoxMixin, Logger):
             self.logger.debug(f'merchant notify error: {pi.get_error()}')
         else:
             self.logger.debug(f'merchant notify result: {pi.merchant_ack_status}: {pi.merchant_ack_message}')
-        # TODO: show user? if we broadcasted the tx succesfully, do we care?
+        # TODO: show user? if we broadcasted the tx successfully, do we care?
         # BitPay complains with a NAK if tx is RbF
 
     def toggle_paytomany(self):

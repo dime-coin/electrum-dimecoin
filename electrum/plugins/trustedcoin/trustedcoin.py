@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 #
-# Electrum - Lightweight Bitcoin Client
+# Electrum-Dime - lightweight Dimecoin client
 # Copyright (C) 2015 Thomas Voegtlin
+# Copyright (C) 2018-2024 Dimecoin Developers
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -596,8 +597,6 @@ class TrustedCoinPlugin(BasePlugin):
 
     # insert trustedcoin pages in new wallet wizard
     def extend_wizard(self, wizard: 'NewWalletWizard'):
-        # wizard = self._app.daemon.newWalletWizard
-        # self.logger.debug(repr(wizard))
         views = {
             'trustedcoin_start': {
                 'next': 'trustedcoin_choose_seed',
@@ -610,18 +609,18 @@ class TrustedCoinPlugin(BasePlugin):
                 'next': 'trustedcoin_confirm_seed'
             },
             'trustedcoin_confirm_seed': {
-                'next': 'trustedcoin_tos_email'
+                'next': 'trustedcoin_tos'
             },
             'trustedcoin_have_seed': {
                 'next': 'trustedcoin_keep_disable'
             },
             'trustedcoin_keep_disable': {
-                'next': lambda d: 'trustedcoin_tos_email' if d['trustedcoin_keepordisable'] != 'disable'
+                'next': lambda d: 'trustedcoin_tos' if d['trustedcoin_keepordisable'] != 'disable'
                         else 'wallet_password',
                 'accept': self.recovery_disable,
                 'last': lambda d: wizard.is_single_password() and d['trustedcoin_keepordisable'] == 'disable'
             },
-            'trustedcoin_tos_email': {
+            'trustedcoin_tos': {
                 'next': 'trustedcoin_show_confirm_otp'
             },
             'trustedcoin_show_confirm_otp': {

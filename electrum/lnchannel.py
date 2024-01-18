@@ -1,4 +1,5 @@
 # Copyright (C) 2018 The Electrum developers
+# Copyright (C) 2018-2024 Dimecoin Developers
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -1622,7 +1623,7 @@ class Channel(AbstractChannel):
         # in the latter case, the result does not depend on peer_state
         ret = []
         if not self.is_closed() and self.peer_state == PeerState.GOOD:
-            # If there are unsettled HTLCs, althought is possible to cooperatively close,
+            # If there are unsettled HTLCs, although is possible to cooperatively close,
             # we choose not to expose that option in the GUI, because it is very likely
             # that HTLCs will take a long time to settle (submarine swap, or stuck payment),
             # and the close dialog would be taking a very long time to finish
@@ -1657,7 +1658,7 @@ class Channel(AbstractChannel):
                     continue
                 if htlc.cltv_abs - recv_htlc_deadline_delta > local_height:
                     continue
-                # Do not force-close if we just sent fullfill_htlc and have not received revack yet
+                # Do not force-close if we just sent fulfill_htlc and have not received revack yet
                 if htlc_id in self.htlc_settle_time and now() - self.htlc_settle_time[htlc_id] < 30:
                     continue
                 htlcs_we_could_reclaim[(RECEIVED, htlc_id)] = htlc

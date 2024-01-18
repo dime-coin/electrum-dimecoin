@@ -445,6 +445,7 @@ class SimpleConfig(Logger):
 
         new_path = self.get_fallback_wallet_path()
 
+        # TODO: this can be removed by now
         # default path in pre 1.9 versions
         old_path = os.path.join(self.path, "electrum.dat")
         if os.path.exists(old_path) and not os.path.exists(new_path):
@@ -452,12 +453,14 @@ class SimpleConfig(Logger):
 
         return new_path
 
-    def get_fallback_wallet_path(self):
+    def get_datadir_wallet_path(self):
         util.assert_datadir_available(self.path)
         dirpath = os.path.join(self.path, "wallets")
         make_dir(dirpath, allow_symlink=False)
-        path = os.path.join(self.path, "wallets", "default_wallet")
-        return path
+        return dirpath
+
+    def get_fallback_wallet_path(self):
+        return os.path.join(self.get_datadir_wallet_path(), "default_wallet")
 
     def remove_from_recently_open(self, filename):
         recent = self.RECENTLY_OPEN_WALLET_FILES or []
@@ -820,7 +823,7 @@ class SimpleConfig(Logger):
         # to be consistent with what is displayed in the GUI,
         # the calculation needs to use the same precision:
         fee_per_byte = quantize_feerate(fee_per_byte)
-        return round(fee_per_byte * size)
+        return max(round(fee_per_byte * size), 1000)
 
     def update_fee_estimates(self, nblock_target: int, fee_per_kb: int):
         assert isinstance(nblock_target, int), f"expected int, got {nblock_target!r}"
@@ -925,7 +928,9 @@ class SimpleConfig(Logger):
     # config variables ----->
     NETWORK_AUTO_CONNECT = ConfigVar('auto_connect', default=True, type_=bool)
     NETWORK_ONESERVER = ConfigVar('oneserver', default=False, type_=bool)
-    NETWORK_PROXY = ConfigVar('proxy', default=None)
+    NETWORK_PROXY = ConfigVar('proxy', default=None, type_=str)
+    NETWORK_PROXY_USER = ConfigVar('proxy_user', default=None, type_=str)
+    NETWORK_PROXY_PASSWORD = ConfigVar('proxy_password', default=None, type_=str)
     NETWORK_SERVER = ConfigVar('server', default=None, type_=str)
     NETWORK_NOONION = ConfigVar('noonion', default=False, type_=bool)
     NETWORK_OFFLINE = ConfigVar('offline', default=False, type_=bool)
@@ -1043,7 +1048,7 @@ This will result in longer routes; it might increase your fees and decrease the 
     TEST_SHUTDOWN_FEE_RANGE = ConfigVar('test_shutdown_fee_range', default=None)
     TEST_SHUTDOWN_LEGACY = ConfigVar('test_shutdown_legacy', default=False, type_=bool)
 
-    FEE_EST_DYNAMIC = ConfigVar('dynamic_fees', default=True, type_=bool)
+    FEE_EST_DYNAMIC = ConfigVar('dynamic_fees', default=False, type_=bool)
     FEE_EST_USE_MEMPOOL = ConfigVar('mempool_fees', default=False, type_=bool)
     FEE_EST_STATIC_FEERATE = ConfigVar('fee_per_kb', default=FEERATE_FALLBACK_STATIC_FEE, type_=int)
     FEE_EST_DYNAMIC_ETA_SLIDERPOS = ConfigVar('fee_level', default=2, type_=int)
@@ -1094,11 +1099,13 @@ This will result in longer routes; it might increase your fees and decrease the 
     GUI_QT_SHOW_TAB_UTXO = ConfigVar('show_utxo_tab', default=False, type_=bool)
     GUI_QT_SHOW_TAB_CONTACTS = ConfigVar('show_contacts_tab', default=False, type_=bool)
     GUI_QT_SHOW_TAB_CONSOLE = ConfigVar('show_console_tab', default=False, type_=bool)
+    GUI_QT_SHOW_TAB_NOTES = ConfigVar('show_notes_tab', default=False, type_=bool)
 
     GUI_QML_PREFERRED_REQUEST_TYPE = ConfigVar('preferred_request_type', default='bolt11', type_=str)
     GUI_QML_USER_KNOWS_PRESS_AND_HOLD = ConfigVar('user_knows_press_and_hold', default=False, type_=bool)
     GUI_QML_ADDRESS_LIST_SHOW_TYPE = ConfigVar('address_list_show_type', default=1, type_=int)
     GUI_QML_ADDRESS_LIST_SHOW_USED = ConfigVar('address_list_show_used', default=False, type_=bool)
+    GUI_QML_ALWAYS_ALLOW_SCREENSHOTS = ConfigVar('android_always_allow_screenshots', default=False, type_=bool)
 
     BTC_AMOUNTS_DECIMAL_POINT = ConfigVar('decimal_point', default=DECIMAL_POINT_DEFAULT, type_=int)
     BTC_AMOUNTS_FORCE_NZEROS_AFTER_DECIMAL_POINT = ConfigVar(
@@ -1112,7 +1119,7 @@ This will result in longer routes; it might increase your fees and decrease the 
     )
     BTC_AMOUNTS_ADD_THOUSANDS_SEP = ConfigVar(
         'amt_add_thousands_sep', default=False, type_=bool,
-        short_desc=lambda: _("Add thousand separators to bitcoin amounts"),
+        short_desc=lambda: _("Add thousand separators to dimecoin amounts"),
     )
 
     BLOCK_EXPLORER = ConfigVar(

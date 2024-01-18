@@ -33,7 +33,9 @@ function verify_signature() {
 
 function verify_hash() {
     local file=$1 expected_hash=$2
-    actual_hash=$(sha256sum $file | awk '{print $1}')
+    actual_hash=$(sha256sum "$file" | awk '{print $1}')
+    echo "Debug: sha256sum output: $(sha256sum "$file")"
+    echo "Expected: $expected_hash, Actual: $actual_hash"
     if [ "$actual_hash" == "$expected_hash" ]; then
         return 0
     else

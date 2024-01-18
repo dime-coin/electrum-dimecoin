@@ -1,10 +1,10 @@
 [app]
 
 # (str) Title of your application
-title = Electrum
+title = Electrum-Dime
 
 # (str) Package name
-package.name = Electrum
+package.name = Electrum-Dime
 
 # (str) Package domain (needed for android/ios packaging)
 package.domain = org.electrum
@@ -22,8 +22,9 @@ source.exclude_exts = spec
 source.exclude_dirs = bin, build, dist, contrib, env,
     electrum/tests,
     electrum/www,
+    electrum/scripts,
+    electrum/utils,
     electrum/gui/qt,
-    electrum/gui/kivy,
     electrum/plugins/payserver,
     packages/qdarkstyle,
     packages/qtpy,

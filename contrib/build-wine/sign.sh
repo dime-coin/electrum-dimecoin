@@ -12,7 +12,7 @@ cd $here
 CERT_FILE=${CERT_FILE:-~/codesigning/cert.pem}
 KEY_FILE=${KEY_FILE:-~/codesigning/key.pem}
 if [[ ! -f "$CERT_FILE" ]]; then
-    ls $CERT_FILE
+    ls "$CERT_FILE"
     echo "Make sure that $CERT_FILE and $KEY_FILE exist"
 fi
 
@@ -33,10 +33,10 @@ for f in $(ls *.exe); do
         -h sha256 \
         -certs "$CERT_FILE" \
         -key "$KEY_FILE" \
-        -n "Electrum" \
+        -n "Electrum-Dime" \
         -i "https://electrum.org/" \
         -t "http://timestamp.digicert.com/" \
         -in "$f" \
         -out "../signed/$f"
-    ls ../signed/$f -lah
+    ls "../signed/$f" -lah
 done

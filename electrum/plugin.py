@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 #
-# Electrum - lightweight Bitcoin client
+# Electrum-Dime - lightweight Dimecoin client
 # Copyright (C) 2015 Thomas Voegtlin
+# Copyright (C) 2018-2024 Dimecoin Developers
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -80,7 +81,13 @@ class Plugins(DaemonThread):
         """
         if cls._all_found_plugins is None:
             cls._all_found_plugins = dict()
-            for loader, name, ispkg in pkgutil.iter_modules([cls.pkgpath]):
+            iter_modules = list(pkgutil.iter_modules([cls.pkgpath]))
+            for loader, name, ispkg in iter_modules:
+                # FIXME pyinstaller binaries are packaging each built-in plugin twice:
+                #       once as data and once as code. To honor the "no duplicates" rule below,
+                #       we exclude the ones packaged as *code*, here:
+                if loader.__class__.__qualname__ == "FrozenImporter":
+                    continue
                 full_name = f'electrum.plugins.{name}'
                 spec = importlib.util.find_spec(full_name)
                 if spec is None:  # pkgutil found it but importlib can't ?!
@@ -94,7 +101,9 @@ class Plugins(DaemonThread):
                 except Exception as e:
                     raise Exception(f"Error pre-loading {full_name}: {repr(e)}") from e
                 d = module.__dict__
-                assert name not in cls._all_found_plugins
+                if name in cls._all_found_plugins:
+                    _logger.info(f"Found the following plugin modules: {iter_modules=}")
+                    raise Exception(f"duplicate plugins? for {name=}")
                 cls._all_found_plugins[name] = d
         return cls._all_found_plugins
 
@@ -123,6 +132,9 @@ class Plugins(DaemonThread):
         return len(self.plugins)
 
     def load_plugin(self, name) -> 'BasePlugin':
+        """Imports the code of the given plugin.
+        note: can be called from any thread.
+        """
         if name in self.plugins:
             return self.plugins[name]
         full_name = f'electrum.plugins.{name}.{self.gui_name}'
@@ -138,7 +150,7 @@ class Plugins(DaemonThread):
             raise Exception(f"Error loading {name} plugin: {repr(e)}") from e
         self.add_jobs(plugin.thread_jobs())
         self.plugins[name] = plugin
-        self.logger.info(f"loaded {name}")
+        self.logger.info(f"loaded plugin {name!r}. (from thread: {threading.current_thread().name!r})")
         return plugin
 
     def close_plugin(self, plugin):
@@ -365,6 +377,16 @@ _hwd_comms_executor = concurrent.futures.ThreadPoolExecutor(
     max_workers=1,
     thread_name_prefix='hwd_comms_thread'
 )
+
+# hidapi needs to be imported from the main thread. Otherwise, at least on macOS,
+# segfaults will follow. (see https://github.com/trezor/cython-hidapi/pull/150#issuecomment-1542391087)
+# To keep it simple, let's just import it now, as we are likely in the main thread here.
+if threading.current_thread() is not threading.main_thread():
+    _logger.warning("expected to be in main thread... hidapi will not be safe to use now!")
+try:
+    import hid
+except ImportError:
+    pass
 
 
 T = TypeVar('T')
@@ -608,10 +630,10 @@ class DeviceMgr(ThreadJob):
         # The user input has wrong PIN or passphrase, or cancelled input,
         # or it is not pairable
         raise DeviceUnpairableError(
-            _('Electrum cannot pair with your {}.\n\n'
-              'Before you request bitcoins to be sent to addresses in this '
+            _('Electrum-Dime cannot pair with your {}.\n\n'
+              'Before you request dimecoins to be sent to addresses in this '
               'wallet, ensure you can pair with your device, or that you have '
-              'its seed (and passphrase, if any).  Otherwise all bitcoins you '
+              'its seed (and passphrase, if any).  Otherwise all dimecoins you '
               'receive will be unspendable.').format(plugin.device))
 
     def list_pairable_device_infos(

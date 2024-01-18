@@ -3,16 +3,16 @@
 <component type="desktop-application">
   <id>org.electrum.electrum</id>
 
-  <name>Electrum</name>
-  <summary>Bitcoin Wallet</summary>
+  <name>Electrum-Dime</name>
+  <summary>Dimecoin Wallet</summary>
 
   <metadata_license>MIT</metadata_license>
   <project_license>MIT</project_license>
 
   <description>
     <p>
-      Electrum is a lightweight Bitcoin wallet focused is speed, with low resource usage and simplifying Bitcoin.
-      Startup times are instant because it operates in conjunction with high-performance servers that handle the most complicated parts of the Bitcoin system.
+      Electrum-Dime's focus is to make using Dimecoin more user-friendly with a focus on speed and with low resource usage.
+      Startup times are instant because it operates in conjunction with high-performance servers that handle the most complicated parts of the Dimecoin system.
     </p>
   </description>
 

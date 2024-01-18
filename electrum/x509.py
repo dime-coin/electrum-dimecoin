@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 #
-# Electrum - lightweight Bitcoin client
+# Electrum-Dime - lightweight Dimecoin client
 # Copyright (C) 2014 Thomas Voegtlin
+# Copyright (C) 2018-2024 Dimecoin Developers
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -25,10 +26,9 @@
 
 import hashlib
 import time
-from datetime import datetime
 
 from . import util
-from .util import profiler
+from .util import profiler, timestamp_to_datetime
 from .logging import get_logger
 
 
@@ -307,7 +307,7 @@ class X509(object):
         if self.notBefore > now:
             raise CertificateError('Certificate has not entered its valid date range. (%s)' % self.get_common_name())
         if self.notAfter <= now:
-            dt = datetime.utcfromtimestamp(time.mktime(self.notAfter))
+            dt = timestamp_to_datetime(time.mktime(self.notAfter), utc=True)
             raise CertificateError(f'Certificate ({self.get_common_name()}) has expired (at {dt} UTC).')
 
     def getFingerprint(self):

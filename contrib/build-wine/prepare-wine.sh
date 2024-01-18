@@ -4,7 +4,7 @@ PYINSTALLER_REPO="https://github.com/pyinstaller/pyinstaller.git"
 PYINSTALLER_COMMIT="413cce49ff28d87fad4472f4953489226ec90c84"
 # ^ tag "v5.11.0"
 
-PYTHON_VERSION=3.10.11
+PYTHON_VERSION=3.11.3
 
 
 # Let's begin!
@@ -53,9 +53,9 @@ $WINE_PYTHON -m pip install --no-build-isolation --no-dependencies --no-binary :
 
 
 # copy already built DLLs
-cp "$DLL_TARGET_DIR"/libsecp256k1-*.dll $WINEPREFIX/drive_c/tmp/ || fail "Could not copy libsecp to its destination"
-cp "$DLL_TARGET_DIR/libzbar-0.dll" $WINEPREFIX/drive_c/tmp/ || fail "Could not copy libzbar to its destination"
-cp "$DLL_TARGET_DIR/libusb-1.0.dll" $WINEPREFIX/drive_c/tmp/ || fail "Could not copy libusb to its destination"
+cp "$DLL_TARGET_DIR"/libsecp256k1-*.dll $WINEPREFIX/drive_c/electrum/electrum/ || fail "Could not copy libsecp to its destination"
+cp "$DLL_TARGET_DIR/libzbar-0.dll" $WINEPREFIX/drive_c/electrum/electrum/ || fail "Could not copy libzbar to its destination"
+cp "$DLL_TARGET_DIR/libusb-1.0.dll" $WINEPREFIX/drive_c/electrum/electrum/ || fail "Could not copy libusb to its destination"
 
 
 info "Building PyInstaller."
@@ -87,7 +87,7 @@ info "Building PyInstaller."
     rm -fv PyInstaller/bootloader/Windows-*/run*.exe || true
     # add reproducible randomness. this ensures we build a different bootloader for each commit.
     # if we built the same one for all releases, that might also get anti-virus false positives
-    echo "const char *electrum_tag = \"tagged by Electrum@$ELECTRUM_COMMIT_HASH\";" >> ./bootloader/src/pyi_main.c
+    echo "const char *electrum_tag = \"tagged by Electrum-Dime@$ELECTRUM_COMMIT_HASH\";" >> ./bootloader/src/pyi_main.c
     pushd bootloader
     # cross-compile to Windows using host python
     python3 ./waf all CC="${GCC_TRIPLET_HOST}-gcc" \

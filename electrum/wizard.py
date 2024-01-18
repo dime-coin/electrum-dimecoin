@@ -264,7 +264,9 @@ class NewWalletWizard(AbstractWizard):
         if initial_data is None:
             initial_data = {}
         self.reset()
-        self._current = WizardViewState('wallet_name', initial_data, {})
+        start_view = 'wallet_name'
+        params = self.navmap[start_view].get('params', {})
+        self._current = WizardViewState(start_view, initial_data, params)
         return self._current
 
     def is_single_password(self) -> bool:
@@ -478,12 +480,13 @@ class NewWalletWizard(AbstractWizard):
                 seed_valid = True
         elif seed_variant == 'bip39':
             is_checksum, is_wordlist = keystore.bip39_is_checksum_valid(seed)
-            status = ('checksum: ' + ('ok' if is_checksum else 'failed')) if is_wordlist else 'unknown wordlist'
-            validation_message = 'BIP39 (%s)' % status
-
-            if is_checksum:
-                seed_type = 'bip39'
-                seed_valid = True
+            validation_message = ('' if is_checksum else _('BIP39 checksum failed')) if is_wordlist else _('Unknown BIP39 wordlist')
+            if not bool(seed):
+                validation_message = ''
+            seed_type = 'bip39'
+            # bip39 always valid, even if checksum failed, see #8720
+            # however, reject empty string
+            seed_valid = bool(seed)
         elif seed_variant == 'slip39':
             # seed shares should be already validated by wizard page, we have a combined encrypted seed
             if seed and isinstance(seed, EncryptedSeed):
@@ -591,8 +594,6 @@ class NewWalletWizard(AbstractWizard):
         db.set_keystore_encryption(bool(data['password']) and data['encrypt'])
 
         db.put('wallet_type', data['wallet_type'])
-        if 'seed_type' in data:
-            db.put('seed_type', data['seed_type'])
 
         if data['wallet_type'] == 'standard':
             db.put('keystore', k.dump())
@@ -653,17 +654,15 @@ class ServerConnectWizard(AbstractWizard):
     def __init__(self, daemon: 'Daemon'):
         AbstractWizard.__init__(self)
         self.navmap = {
-            'autoconnect': {
-                'next': 'server_config',
+            'welcome': {
+                'next': lambda d: 'proxy_config' if d['want_proxy'] else 'server_config',
                 'accept': self.do_configure_autoconnect,
-                'last': lambda d: d['autoconnect']
-            },
-            'proxy_ask': {
-                'next': lambda d: 'proxy_config' if d['want_proxy'] else 'autoconnect'
+                'last': lambda d: bool(d['autoconnect'] and not d['want_proxy'])
             },
             'proxy_config': {
-                'next': 'autoconnect',
-                'accept': self.do_configure_proxy
+                'next': 'server_config',
+                'accept': self.do_configure_proxy,
+                'last': lambda d: bool(d['autoconnect'])
             },
             'server_config': {
                 'accept': self.do_configure_server,
@@ -681,29 +680,34 @@ class ServerConnectWizard(AbstractWizard):
         net_params = self._daemon.network.get_parameters()
         if not proxy_settings['enabled']:
             proxy_settings = None
-        net_params = net_params._replace(proxy=proxy_settings)
+        net_params = net_params._replace(proxy=proxy_settings, auto_connect=bool(wizard_data['autoconnect']))
         self._daemon.network.run_from_another_thread(self._daemon.network.set_parameters(net_params))
 
     def do_configure_server(self, wizard_data: dict):
         self._logger.debug(f'configuring server: {wizard_data!r}')
         net_params = self._daemon.network.get_parameters()
-        try:
-            server = ServerAddr.from_str_with_inference(wizard_data['server'])
-            if not server:
-                raise Exception('failed to parse server %s' % wizard_data['server'])
-        except Exception:
-            return
+        server = ''
+        if not wizard_data['autoconnect']:
+            try:
+                server = ServerAddr.from_str_with_inference(wizard_data['server'])
+                if not server:
+                    raise Exception('failed to parse server %s' % wizard_data['server'])
+            except Exception:
+                return
         net_params = net_params._replace(server=server, auto_connect=wizard_data['autoconnect'])
         self._daemon.network.run_from_another_thread(self._daemon.network.set_parameters(net_params))
 
     def do_configure_autoconnect(self, wizard_data: dict):
         self._logger.debug(f'configuring autoconnect: {wizard_data!r}')
         if self._daemon.config.cv.NETWORK_AUTO_CONNECT.is_modifiable():
-            self._daemon.config.NETWORK_AUTO_CONNECT = wizard_data['autoconnect']
+            if wizard_data.get('autoconnect') is not None:
+                self._daemon.config.NETWORK_AUTO_CONNECT = wizard_data.get('autoconnect')
 
     def start(self, initial_data: dict = None) -> WizardViewState:
         if initial_data is None:
             initial_data = {}
         self.reset()
-        self._current = WizardViewState('proxy_ask', initial_data, {})
+        start_view = 'welcome'
+        params = self.navmap[start_view].get('params', {})
+        self._current = WizardViewState(start_view, initial_data, params)
         return self._current

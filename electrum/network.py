@@ -1,5 +1,6 @@
-# Electrum - Lightweight Bitcoin Client
+# Electrum-Dime - lightweight Dimecoin client
 # Copyright (c) 2011-2016 Thomas Voegtlin
+# Copyright (C) 2018-2024 Dimecoin Developers
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -40,7 +41,7 @@ import functools
 from enum import IntEnum
 
 import aiorpcx
-from aiorpcx import ignore_after
+from aiorpcx import ignore_after, NetAddress
 from aiohttp import ClientResponse
 
 from . import util
@@ -168,35 +169,51 @@ proxy_modes = ['socks4', 'socks5']
 def serialize_proxy(p):
     if not isinstance(p, dict):
         return None
-    return ':'.join([p.get('mode'), p.get('host'), p.get('port'),
-                     p.get('user', ''), p.get('password', '')])
+    return ':'.join([p.get('mode'), p.get('host'), p.get('port')])
 
 
-def deserialize_proxy(s: Optional[str]) -> Optional[dict]:
+def deserialize_proxy(s: Optional[str], user: str = None, password: str = None) -> Optional[dict]:
     if not isinstance(s, str):
         return None
     if s.lower() == 'none':
         return None
-    proxy = {"mode":"socks5", "host":"localhost"}
-    # FIXME raw IPv6 address fails here
+    proxy = {"mode": "socks5", "host": "localhost"}
+
     args = s.split(':')
-    n = 0
-    if proxy_modes.count(args[n]) == 1:
-        proxy["mode"] = args[n]
-        n += 1
-    if len(args) > n:
-        proxy["host"] = args[n]
-        n += 1
-    if len(args) > n:
-        proxy["port"] = args[n]
-        n += 1
-    else:
-        proxy["port"] = "8080" if proxy["mode"] == "http" else "1080"
-    if len(args) > n:
-        proxy["user"] = args[n]
-        n += 1
-    if len(args) > n:
-        proxy["password"] = args[n]
+    if args[0] in proxy_modes:
+        proxy['mode'] = args[0]
+        args = args[1:]
+
+    def is_valid_port(ps: str):
+        try:
+            return 0 < int(ps) < 65535
+        except ValueError:
+            return False
+
+    def is_valid_host(ph: str):
+        try:
+            NetAddress(ph, '1')
+        except ValueError:
+            return False
+        return True
+
+    # detect migrate from old settings
+    if len(args) == 4 and is_valid_host(args[0]) and is_valid_port(args[1]):  # host:port:user:pass,
+        proxy['host'] = args[0]
+        proxy['port'] = args[1]
+        proxy['user'] = args[2]
+        proxy['password'] = args[3]
+        return proxy
+
+    proxy['host'] = ':'.join(args[:-1])
+    proxy['port'] = args[-1]
+
+    if not is_valid_host(proxy['host']) or not is_valid_port(proxy['port']):
+        return None
+
+    proxy['user'] = user
+    proxy['password'] = password
+
     return proxy
 
 
@@ -307,6 +324,8 @@ class Network(Logger, NetworkRetryManager[ServerAddr]):
 
         self._allowed_protocols = {PREFERRED_NETWORK_PROTOCOL}
 
+        self.proxy = None
+        self.is_proxy_tor = None
         self._init_parameters_from_config()
 
         self.taskgroup = None
@@ -391,6 +410,9 @@ class Network(Logger, NetworkRetryManager[ServerAddr]):
 
     @staticmethod
     def get_instance() -> Optional["Network"]:
+        """Return the global singleton network instance.
+        Note that this can return None! If we are run with the --offline flag, there is no network.
+        """
         return _INSTANCE
 
     def with_recent_servers_lock(func):
@@ -494,9 +516,11 @@ class Network(Logger, NetworkRetryManager[ServerAddr]):
                                  oneserver=self.oneserver)
 
     def _init_parameters_from_config(self) -> None:
+        dns_hacks.configure_dns_resolver()
         self.auto_connect = self.config.NETWORK_AUTO_CONNECT
         self._set_default_server()
-        self._set_proxy(deserialize_proxy(self.config.NETWORK_PROXY))
+        self._set_proxy(deserialize_proxy(self.config.NETWORK_PROXY, self.config.NETWORK_PROXY_USER,
+                                          self.config.NETWORK_PROXY_PASSWORD))
         self._maybe_set_oneserver()
 
     def get_donation_address(self):
@@ -608,23 +632,36 @@ class Network(Logger, NetworkRetryManager[ServerAddr]):
         assert isinstance(self.default_server, ServerAddr), f"invalid type for default_server: {self.default_server!r}"
 
     def _set_proxy(self, proxy: Optional[dict]):
-        self.proxy = proxy
-        dns_hacks.configure_dns_depending_on_proxy(bool(proxy))
+        if self.proxy == proxy:
+            return
+
         self.logger.info(f'setting proxy {proxy}')
+        self.proxy = proxy
+        self.is_proxy_tor = None
 
-        self.tor_proxy = False
-        if bool(proxy) and proxy['mode'] == 'socks5':
-            # test for Tor
-            self.tor_proxy = util.is_tor_socks_port(proxy['host'], int(proxy['port']))
-            if self.tor_proxy:
-                self.logger.info(f'Proxy is TOR')
+        def tor_probe_task(p):
+            assert p is not None
+            tor_proxy = util.is_tor_socks_port(p['host'], int(p['port']))
+            if self.proxy == p:  # is this the proxy we probed?
+                self.logger.info(f'Proxy is {"" if tor_proxy else "not "}TOR')
+                self._tor_probe_done(tor_proxy)
 
-        util.trigger_callback('proxy_set', self.proxy, self.tor_proxy)
+        if proxy and proxy['mode'] == 'socks5':
+            t = threading.Thread(target=tor_probe_task, args=(proxy,), daemon=True)
+            t.start()
+
+        util.trigger_callback('proxy_set', self.proxy)
+
+    def _tor_probe_done(self, is_tor: bool):
+        self.is_proxy_tor = is_tor
+        util.trigger_callback('tor_probed', is_tor)
 
     @log_exceptions
     async def set_parameters(self, net_params: NetworkParameters):
         proxy = net_params.proxy
         proxy_str = serialize_proxy(proxy)
+        proxy_user = proxy['user'] if proxy else None
+        proxy_pass = proxy['password'] if proxy else None
         server = net_params.server
         # sanitize parameters
         try:
@@ -636,10 +673,14 @@ class Network(Logger, NetworkRetryManager[ServerAddr]):
         self.config.NETWORK_AUTO_CONNECT = net_params.auto_connect
         self.config.NETWORK_ONESERVER = net_params.oneserver
         self.config.NETWORK_PROXY = proxy_str
+        self.config.NETWORK_PROXY_USER = proxy_user
+        self.config.NETWORK_PROXY_PASSWORD = proxy_pass
         self.config.NETWORK_SERVER = str(server)
         # abort if changes were not allowed by config
         if self.config.NETWORK_SERVER != str(server) \
                 or self.config.NETWORK_PROXY != proxy_str \
+                or self.config.NETWORK_PROXY_USER != proxy_user \
+                or self.config.NETWORK_PROXY_PASSWORD != proxy_pass \
                 or self.config.NETWORK_ONESERVER != net_params.oneserver:
             return
 
@@ -1035,7 +1076,7 @@ class Network(Logger, NetworkRetryManager[ServerAddr]):
             r"bad-txns-too-many-sigops": None,
             r"mempool min fee not met":
                 ("mempool min fee not met\n" +
-                 _("Your transaction is paying a fee that is so low that the bitcoin node cannot "
+                 _("Your transaction is paying a fee that is so low that the dimecoin node cannot "
                    "fit it into its mempool. The mempool is already full of hundreds of megabytes "
                    "of transactions that all pay higher fees. Try to increase the fee.")),
             r"min relay fee not met": None,
@@ -1119,7 +1160,7 @@ class Network(Logger, NetworkRetryManager[ServerAddr]):
             r"dust":
                 (_("Transaction could not be broadcast due to dust outputs.\n"
                    "Some of the outputs are too small in value, probably lower than 1000 satoshis.\n"
-                   "Check the units, make sure you haven't confused e.g. mBTC and BTC.")),
+                   "Check the units, make sure you haven't confused e.g. mDIME and DIME.")),
             r"multi-op-return": _("The transaction was rejected because it contains multiple OP_RETURN outputs."),
         }
         for substring in policy_error_messages:

@@ -89,7 +89,7 @@ Pane {
                 Layout.columnSpan: 2
             }
             Label {
-                text: qsTr('Distributed by Electrum Technologies GmbH')
+                text: qsTr('Distributed by Dimecoin Developers')
                 Layout.columnSpan: 2
                 Layout.alignment: Qt.AlignHCenter
             }

@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 #
-# Electrum - lightweight Bitcoin client
+# Electrum-Dime - lightweight Dimecoin client
 # Copyright (C) 2015 Thomas Voegtlin
+# Copyright (C) 2018-2024 Dimecoin Developers
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -67,7 +68,7 @@ class WalletUnfinished(WalletFileException):
 # seed_version is now used for the version of the wallet file
 OLD_SEED_VERSION = 4        # electrum versions < 2.0
 NEW_SEED_VERSION = 11       # electrum versions >= 2.0
-FINAL_SEED_VERSION = 56     # electrum >= 2.7 will set this to prevent
+FINAL_SEED_VERSION = 57     # electrum >= 2.7 will set this to prevent
                             # old versions from overwriting new format
 
 
@@ -227,6 +228,7 @@ class WalletDBUpgrader(Logger):
         self._convert_version_54()
         self._convert_version_55()
         self._convert_version_56()
+        self._convert_version_57()
         self.put('seed_version', FINAL_SEED_VERSION)  # just to be sure
 
     def _convert_wallet_type(self):
@@ -1095,6 +1097,14 @@ class WalletDBUpgrader(Logger):
                 item[c]['announcement_bitcoin_sig'] = ''
             item['local_config'].pop('was_announced')
         self.data['seed_version'] = 56
+
+    def _convert_version_57(self):
+        if not self._is_upgrade_method_needed(56, 56):
+            return
+        # The 'seed_type' field could be present both at the top-level and inside keystores.
+        # We delete the one that is top-level.
+        self.data.pop('seed_type', None)
+        self.data['seed_version'] = 57
 
     def _convert_imported(self):
         if not self._is_upgrade_method_needed(0, 13):

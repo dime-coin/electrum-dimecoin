@@ -1,5 +1,6 @@
-# Electrum - Lightweight Bitcoin Client
+# Electrum-Dime - lightweight Dimecoin client
 # Copyright (c) 2015 Thomas Voegtlin
+# Copyright (C) 2018-2024 Dimecoin Developers
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -99,7 +100,7 @@ class Contacts(dict, Logger):
                 }
         if openalias := self.resolve_openalias(k):
             return openalias
-        raise AliasNotFoundException("Invalid Bitcoin address or alias", k)
+        raise AliasNotFoundException("Invalid Dimecoin address or alias", k)
 
     @classmethod
     def resolve_openalias(cls, url: str) -> Dict[str, Any]:
