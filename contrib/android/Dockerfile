@@ -126,6 +126,7 @@ RUN apt -y update -qq \
         unzip \
         build-essential \
         ccache \
+        rsync \
         openjdk-11-jdk-headless \
         autoconf \
         libtool \
