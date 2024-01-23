@@ -60,7 +60,9 @@ requirements =
     pyqt6sip,
     pyqt6,
     pillow,
-    libzbar
+    libzbar,
+    pivx_quark_hash,
+    quark_hash
 
 # (str) Presplash of the application
 presplash.filename = %(source.dir)s/electrum/gui/icons/electrum_presplash.png
