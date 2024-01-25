@@ -15,7 +15,7 @@ Pane {
 
     padding: 0
 
-    property var _baseunits: ['BTC','mBTC','bits','sat']
+    property var _baseunits: ['DIME','mDIME','bits','sat']
 
     ColumnLayout {
         anchors.fill: parent
@@ -55,7 +55,7 @@ Pane {
                                 if (Config.language != currentValue) {
                                     Config.language = currentValue
                                     var dialog = app.messageDialog.createObject(app, {
-                                        text: qsTr('Please restart Electrum to activate the new GUI settings')
+                                        text: qsTr('Please restart Electrum-Dime to activate the new GUI settings')
                                     })
                                     dialog.open()
                                 }
@@ -269,7 +269,7 @@ Pane {
                                     if (!checked) {
                                         var dialog = app.messageDialog.createObject(app, {
                                             title: qsTr('Are you sure?'),
-                                            text: qsTr('Electrum will have to download the Lightning Network graph, which is not recommended on mobile.'),
+                                            text: qsTr('Electrum-Dime will have to download the Lightning Network graph, which is not recommended on mobile.'),
                                             yesno: true
                                         })
                                         dialog.accepted.connect(function() {

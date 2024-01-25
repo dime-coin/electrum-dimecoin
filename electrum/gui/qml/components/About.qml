@@ -6,7 +6,7 @@ import QtQuick.Controls.Material
 Pane {
     objectName: 'About'
 
-    property string title: qsTr("About Electrum")
+    property string title: qsTr("About Electrum-Dime")
 
     Flickable {
         anchors.fill: parent
@@ -72,7 +72,7 @@ Pane {
                 Layout.alignment: Qt.AlignRight
             }
             Label {
-                text: qsTr('<a href="https://electrum.org">https://electrum.org</a>')
+                text: qsTr('<a href="https://dimecoinnetwork.com">https://dimecoinnetwork.com</a>')
                 textFormat: Text.RichText
                 onLinkActivated: Qt.openUrlExternally(link)
             }
@@ -81,7 +81,7 @@ Pane {
                 Layout.alignment: Qt.AlignRight
             }
             Label {
-                text: 'Thomas Voegtlin\nSomberNight\nSander van Grieken'
+                text: 'Dimecoin Developers\nDouglas Hopping\nSean `Dalamar` Cusack\nJames `Barrystyle` Taylor'
             }
             Item {
                 width: 1

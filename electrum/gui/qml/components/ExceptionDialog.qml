@@ -37,7 +37,7 @@ ElDialog
 
         Label {
             Layout.fillWidth: true
-            text: qsTr('Something went wrong while executing Electrum.')
+            text: qsTr('Something went wrong while executing Electrum-Dime.')
         }
         Label {
             Layout.fillWidth: true
