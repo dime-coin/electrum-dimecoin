@@ -2194,7 +2194,7 @@ class Peer(Logger):
             return
         feerate_per_kw = self.lnworker.current_feerate_per_kw()
         if not chan.constraints.is_initiator:
-            if constants.net is not constants.BitcoinRegtest:
+            if constants.net is not constants.DimecoinRegtest:
                 chan_feerate = chan.get_latest_feerate(LOCAL)
                 ratio = chan_feerate / feerate_per_kw
                 if ratio < 0.5:

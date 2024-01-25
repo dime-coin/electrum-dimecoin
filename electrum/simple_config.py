@@ -731,7 +731,7 @@ class SimpleConfig(Logger):
 
         fee_level: float between 0.0 and 1.0, representing fee slider position
         """
-        if constants.net is constants.BitcoinRegtest:
+        if constants.net is constants.DimecoinRegtest:
             return self.FEE_EST_STATIC_FEERATE
         if dyn is None:
             dyn = self.is_dynfee()
@@ -917,9 +917,9 @@ class SimpleConfig(Logger):
         return CVLookupHelper()
 
     def _default_swapserver_url(self) -> str:
-        if constants.net == constants.BitcoinMainnet:
+        if constants.net == constants.DimecoinMainnet:
             default = 'https://swaps.electrum.org/api'
-        elif constants.net == constants.BitcoinTestnet:
+        elif constants.net == constants.DimecoinTestnet:
             default = 'https://swaps.electrum.org/testnet'
         else:
             default = 'http://localhost:5455'

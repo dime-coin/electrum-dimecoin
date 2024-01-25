@@ -70,7 +70,7 @@ class AbstractNet:
         return bytes.fromhex(bitcoin.rev_hex(cls.GENESIS))
 
 
-class BitcoinMainnet(AbstractNet):
+class DimecoinMainnet(AbstractNet):
 
     NET_NAME = "mainnet"
     TESTNET = False
@@ -107,7 +107,7 @@ class BitcoinMainnet(AbstractNet):
     ]
 
 
-class BitcoinTestnet(AbstractNet):
+class DimecoinTestnet(AbstractNet):
 
     NET_NAME = "testnet"
     TESTNET = True
@@ -145,7 +145,7 @@ class BitcoinTestnet(AbstractNet):
     ]
 
 
-class BitcoinRegtest(BitcoinTestnet):
+class DimecoinRegtest(DimecoinTestnet):
 
     NET_NAME = "regtest"
     SEGWIT_HRP = "bcrt"
@@ -156,7 +156,7 @@ class BitcoinRegtest(BitcoinTestnet):
     LN_DNS_SEEDS = []
 
 
-class BitcoinSimnet(BitcoinTestnet):
+class DimecoinSimnet(DimecoinTestnet):
 
     NET_NAME = "simnet"
     WIF_PREFIX = 0x64
@@ -170,7 +170,7 @@ class BitcoinSimnet(BitcoinTestnet):
     LN_DNS_SEEDS = []
 
 
-class BitcoinSignet(BitcoinTestnet):
+class DimecoinSignet(DimecoinTestnet):
 
     NET_NAME = "signet"
     BOLT11_HRP = "tbs"
@@ -183,24 +183,24 @@ class BitcoinSignet(BitcoinTestnet):
 NETS_LIST = tuple(all_subclasses(AbstractNet))
 
 # don't import net directly, import the module instead (so that net is singleton)
-net = BitcoinMainnet
+net = DimecoinMainnet
 
 def set_signet():
     global net
-    net = BitcoinSignet
+    net = DimecoinSignet
 
 def set_simnet():
     global net
-    net = BitcoinSimnet
+    net = DimecoinSimnet
 
 def set_mainnet():
     global net
-    net = BitcoinMainnet
+    net = DimecoinMainnet
 
 def set_testnet():
     global net
-    net = BitcoinTestnet
+    net = DimecoinTestnet
 
 def set_regtest():
     global net
-    net = BitcoinRegtest
+    net = DimecoinRegtest
