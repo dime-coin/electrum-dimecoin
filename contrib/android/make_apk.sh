@@ -10,6 +10,9 @@ LOCALE="$PROJECT_ROOT"/electrum/locale/
 
 . "$CONTRIB"/build_tools_util.sh
 
+echo "PROJECT_ROOT: $PROJECT_ROOT"
+echo "PROJECT_ROOT_OR_FRESHCLONE_ROOT: $PROJECT_ROOT_OR_FRESHCLONE_ROOT"
+
 git -C "$PROJECT_ROOT" rev-parse 2>/dev/null || fail "Building outside a git clone is not supported."
 
 
