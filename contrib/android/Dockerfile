@@ -7,7 +7,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 ENV ANDROID_HOME="/opt/android"
 
 # need ca-certificates before using snapshot packages
-RUN apt update -qq > /dev/null && apt install -qq --yes --no-install-recommends \
+RUN apt update -q > /dev/null && apt install -q --yes --no-install-recommends \
     ca-certificates
 
 # pin the distro packages.
@@ -206,7 +206,7 @@ RUN cd /opt \
     && git remote add accumulator https://github.com/accumulator/buildozer \
     && git fetch --all \
     # commit: from branch electrum-qt6 (note: careful with force-pushing! see #8162) \
-    && git checkout "ce4f2257249fdf4ff1f4cb8983fd7ac44174a274^{commit}" \
+    && git checkout "4403ecf445f10b5fbf7c74f4621bf2b922ad35b5^{commit}" \
     && /opt/venv/bin/python3 -m pip install --no-build-isolation --no-dependencies -e .
 
 # install python-for-android
