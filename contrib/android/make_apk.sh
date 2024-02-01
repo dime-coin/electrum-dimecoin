@@ -38,6 +38,8 @@ info "preparing electrum-locale."
 
 pushd "$CONTRIB_ANDROID"
 
+sudo chown -R user:user /home/user/wspace/electrum
+
 info "apk building phase starts."
 
 # Uncomment and change below to set a custom android package id,
