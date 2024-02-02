@@ -198,10 +198,9 @@ class Mnemonic(Logger):
             i = i*n + k
         return i
 
-    def make_seed(self, *, seed_type=None, num_bits=None) -> str:
+    def make_seed(self, *, seed_type='standard', num_bits=None) -> str:
         from .keystore import bip39_is_checksum_valid
-        if seed_type is None:
-            seed_type = 'segwit'
+
         if num_bits is None:
             num_bits = 132
         prefix = version.seed_prefix(seed_type)
@@ -264,7 +263,7 @@ def seed_type(x: str) -> str:
     elif is_new_seed(x, version.SEED_PREFIX):
         return 'standard'
     elif is_new_seed(x, version.SEED_PREFIX_SW):
-        return 'segwit'
+        return 'standard'
     elif is_new_seed(x, version.SEED_PREFIX_2FA) and (num_words == 12 or num_words >= 20):
         # Note: in Electrum 2.7, there was a breaking change in key derivation
         #       for this seed type. Unfortunately the seed version/prefix was reused,

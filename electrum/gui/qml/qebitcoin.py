@@ -1,4 +1,5 @@
 import asyncio
+import traceback
 
 from PyQt6.QtCore import pyqtProperty, pyqtSignal, pyqtSlot, QObject
 
@@ -24,8 +25,8 @@ class QEBitcoin(QObject):
     def __init__(self, config, parent=None):
         super().__init__(parent)
         self.config = config
-        self._seed_type = ''
-        self._generated_seed = ''
+        self._seed_type = 'standard'
+        self._generated_seed = 'standard'
         self._validationMessage = ''
         self._words = None
 
@@ -50,15 +51,22 @@ class QEBitcoin(QObject):
     @pyqtSlot()
     @pyqtSlot(str)
     @pyqtSlot(str, str)
-    def generateSeed(self, seed_type='segwit', language='en'):
-        self._logger.debug('generating seed of type ' + str(seed_type))
 
-        async def co_gen_seed(seed_type, language):
-            self._generated_seed = mnemonic.Mnemonic(language).make_seed(seed_type=seed_type)
-            self._logger.debug('seed generated')
+    #force standard seed generation, ignore segwit. added debug logging 
+    def generateSeed(self, seed_type='standard', language='en'):
+        # Log that a standard seed is being generated, regardless of the passed seed_type
+        self._logger.debug(f'Generating seed of type standard, ignoring passed seed_type: {seed_type}')
+
+        # Define the coroutine within the generateSeed function
+        async def co_gen_seed(language):
+            # Directly use 'standard' as the seed_type for generating the seed
+            self._generated_seed = mnemonic.Mnemonic(language).make_seed(seed_type='standard')
+            self._logger.debug('Seed generated with type standard')
             self.generatedSeedChanged.emit()
 
-        asyncio.run_coroutine_threadsafe(co_gen_seed(seed_type, language), get_asyncio_loop())
+        # Call the coroutine without passing the seed_type argument
+        asyncio.run_coroutine_threadsafe(co_gen_seed(language), get_asyncio_loop())
+
 
     @pyqtSlot(str, str, result=bool)
     def verifyMasterKey(self, key, wallet_type='standard'):
