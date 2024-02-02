@@ -51,6 +51,7 @@ class QEBitcoin(QObject):
     @pyqtSlot()
     @pyqtSlot(str)
     @pyqtSlot(str, str)
+    
 
     #force standard seed generation, ignore segwit. added debug logging 
     def generateSeed(self, seed_type='standard', language='en'):
