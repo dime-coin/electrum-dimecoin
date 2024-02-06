@@ -76,12 +76,26 @@ Pane {
                 textFormat: Text.RichText
                 onLinkActivated: Qt.openUrlExternally(link)
             }
+                        Label {
+                text: qsTr('Documentation')
+                Layout.alignment: Qt.AlignRight
+            }
+            Label {
+                text: qsTr('<a href="https://electrum-docs.dimecoinnetwork.com">Read-the-Docs</a>')
+                textFormat: Text.RichText
+                onLinkActivated: Qt.openUrlExternally(link)
+            }
+            Item {
+                width: 1
+                height: constants.paddingXLarge
+                Layout.columnSpan: 2
+            }
             Label {
                 text: qsTr('Developers')
                 Layout.alignment: Qt.AlignRight
             }
             Label {
-                text: 'Dimecoin Developers\nDouglas Hopping\nSean `Dalamar` Cusack\nJames `Barrystyle` Taylor'
+                text: 'Douglas `Dhop14` Hopping\nSean `Dalamar` Cusack\nJames `Barrystyle` Taylor'
             }
             Item {
                 width: 1
