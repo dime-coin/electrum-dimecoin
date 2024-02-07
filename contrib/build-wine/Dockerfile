@@ -11,9 +11,9 @@ COPY apt.preferences /etc/apt/preferences.d/snapshot
 ENV LC_ALL=C.UTF-8 LANG=C.UTF-8
 ENV DEBIAN_FRONTEND=noninteractive
 
-RUN dpkg --add-architecture i386 && \
-    apt-get update -q && \
-    apt-get install -qy --allow-downgrades \
+RUN dpkg --add-architecture i386 
+RUN apt-get update -q 
+RUN apt-get install -qy --allow-downgrades \
         wget \
         gnupg2 \
         dirmngr \
@@ -30,11 +30,11 @@ RUN dpkg --add-architecture i386 && \
         libtool \
         gettext \
         sudo \
-        nsis \
-        && \
-    rm -rf /var/lib/apt/lists/* && \
-    apt-get autoremove -y && \
-    apt-get clean
+        nsis          
+
+RUN rm -rf /var/lib/apt/lists/* 
+RUN apt-get autoremove -y
+RUN apt-get clean
 
 RUN wget -nc https://dl.winehq.org/wine-builds/Release.key && \
         echo "c51bcb8cc4a12abfbd7c7660eaf90f49674d15e222c262f27e6c96429111b822 Release.key" | sha256sum -c - && \
