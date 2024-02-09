@@ -32,8 +32,8 @@ CCY_PRECISIONS = {'BHD': 3, 'BIF': 0, 'BYR': 0, 'CLF': 4, 'CLP': 0,
                   'LYD': 3, 'MGA': 1, 'MRO': 1, 'OMR': 3, 'PYG': 0,
                   'RWF': 0, 'TND': 3, 'UGX': 0, 'UYI': 0, 'VND': 0,
                   'VUV': 0, 'XAF': 0, 'XAU': 4, 'XOF': 0, 'XPF': 0,
-                  'USD':12, 'AUD': 12,'JPY':12, 'EUR': 12, 'CAD':12,
-                  'CNY':12, 'ISK':12, 'GBP':12, 'BRL':12,
+                  'USD':8, 'AUD': 8,'JPY':8, 'EUR': 8, 'CAD':8,
+                  'CNY':8, 'ISK':8, 'GBP':8, 'BRL':8,
                   # Cryptocurrencies
                   'BTC': 8, 'DIME': 5, 'LTC': 8, 'XRP': 6, 'ETH': 18,
                   }
