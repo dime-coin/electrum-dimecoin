@@ -369,7 +369,7 @@ class SimpleConfig(Logger):
         base_unit = self.user_config.get('base_unit')
         if isinstance(base_unit, str):
             self._set_key_in_user_config('base_unit', None)
-            map_ = {'dime':5, 'mdime':2, 'ubtc':2, 'bits':2, 'sat':0}
+            map_ = {'dime':5, 'mdime':3, 'ubtc':2, 'bits':2, 'sat':0}
             decimal_point = map_.get(base_unit.lower())
             self._set_key_in_user_config('decimal_point', decimal_point)
 
@@ -782,7 +782,7 @@ class SimpleConfig(Logger):
             if value not in FEE_DEPTH_TARGETS:
                 raise Exception(f"Error: fee_level must be in {FEE_DEPTH_TARGETS}")
             self.FEE_EST_USE_MEMPOOL = True
-            self.FEE_EST_DYNAMIC = True
+            self.FEE_EST_DYNAMIC = False
             self.FEE_EST_DYNAMIC_MEMPOOL_SLIDERPOS = FEE_DEPTH_TARGETS.index(value)
         elif fee_method == 'ETA':
             if value not in FEE_ETA_TARGETS:
