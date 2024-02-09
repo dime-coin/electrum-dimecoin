@@ -86,8 +86,11 @@ def all_subclasses(cls) -> Set:
 
 ca_path = certifi.where()
 
-
-base_units = {'DIME':5, 'mDIME':2, 'bits':2, 'sat':0}
+#    'DIME': 5,    # Full Dimecoin to its smallest unit.
+#    'mDIME': 3,   # MilliDimecoin, one-thousandth of a Dimecoin.
+#    'bits': 2,   # 1,000 bits = 100,000 "dime-satoshis".
+#    'sat': 0     # The smallest unit of Dimecoin
+base_units = {'DIME':5, 'mDIME':3, 'bits':2, 'sat':0} 
 base_units_inverse = inv_dict(base_units)
 base_units_list = ['DIME', 'mDIME', 'bits', 'sat']  # list(dict) does not guarantee order
 
@@ -98,7 +101,7 @@ class UnknownBaseUnit(Exception): pass
 
 
 def decimal_point_to_base_unit_name(dp: int) -> str:
-    # e.g. 8 -> "BTC"
+    # e.g. 5 -> "DIME"
     try:
         return base_units_inverse[dp]
     except KeyError:
@@ -107,7 +110,7 @@ def decimal_point_to_base_unit_name(dp: int) -> str:
 
 def base_unit_name_to_decimal_point(unit_name: str) -> int:
     """Returns the max number of digits allowed after the decimal point."""
-    # e.g. "BTC" -> 8
+    # e.g. "DIME" -> 5
     try:
         return base_units[unit_name]
     except KeyError:
