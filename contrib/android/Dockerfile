@@ -7,7 +7,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 ENV ANDROID_HOME="/opt/android"
 
 # need ca-certificates before using snapshot packages
-RUN apt update -qq > /dev/null && apt install -qq --yes --no-install-recommends \
+RUN apt update -q > /dev/null && apt install -q --yes --no-install-recommends \
     ca-certificates
 
 # pin the distro packages.
@@ -157,34 +157,22 @@ RUN apt -y update -qq \
     && apt -y autoremove \
     && apt -y clean
 
-# Temp disable user creation. TODO: Fix permissions
-# # create new user to avoid using root; but with sudo access and no password for convenience.
-# ARG UID=1000
-# ENV USER="user"
-# ENV HOME_DIR="/home/${USER}"
-# ENV WORK_DIR="${HOME_DIR}/wspace" \
-#     PATH="${HOME_DIR}/.local/bin:${PATH}"
-# RUN useradd --uid $UID --create-home --shell /bin/bash ${USER}
-# RUN usermod -append --groups sudo ${USER}
-# RUN echo "%sudo ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
-# WORKDIR ${WORK_DIR}
-# RUN chown --recursive ${USER} ${WORK_DIR} ${ANDROID_SDK_HOME}
-# RUN chown ${USER} /opt
-# USER ${USER}
+
 
 # create new user to avoid using root; but with sudo access and no password for convenience.
-#ARG UID=1000
-ENV USER="root"
+ARG UID=1000
+ENV USER="user"
 ENV HOME_DIR="/home/${USER}"
 ENV WORK_DIR="${HOME_DIR}/wspace" \
     PATH="${HOME_DIR}/.local/bin:${PATH}"
-#RUN useradd --uid $UID --create-home --shell /bin/bash ${USER}
-#RUN usermod -append --groups sudo ${USER}
-#RUN echo "%sudo ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+RUN useradd --uid $UID --create-home --shell /bin/bash ${USER}
+RUN usermod -append --groups sudo ${USER}
+RUN echo "%sudo ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 WORKDIR ${WORK_DIR}
-#RUN chown --recursive ${USER} ${WORK_DIR} ${ANDROID_SDK_HOME}
-#RUN chown ${USER} /opt
-#USER ${USER}
+RUN chown --recursive ${USER} ${WORK_DIR} ${ANDROID_SDK_HOME}
+RUN chown ${USER} /opt
+USER ${USER}
+
 
 # venv, VIRTUAL_ENV is used by buildozer to indicate a venv environment
 ENV VIRTUAL_ENV=/opt/venv
@@ -206,7 +194,7 @@ RUN cd /opt \
     && git remote add accumulator https://github.com/accumulator/buildozer \
     && git fetch --all \
     # commit: from branch electrum-qt6 (note: careful with force-pushing! see #8162) \
-    && git checkout "ce4f2257249fdf4ff1f4cb8983fd7ac44174a274^{commit}" \
+    && git checkout "4403ecf445f10b5fbf7c74f4621bf2b922ad35b5^{commit}" \
     && /opt/venv/bin/python3 -m pip install --no-build-isolation --no-dependencies -e .
 
 # install python-for-android

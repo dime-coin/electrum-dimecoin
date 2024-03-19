@@ -441,7 +441,7 @@ class WCCreateSeed(WizardComponent):
     def __init__(self, parent, wizard):
         WizardComponent.__init__(self, parent, wizard, title=_('Wallet Seed'))
         self._busy = True
-        self.seed_type = 'standard' if self.wizard.config.WIZARD_DONT_CREATE_SEGWIT else 'segwit'
+        self.seed_type = 'standard' if self.wizard.config.WIZARD_DONT_CREATE_SEGWIT else 'standard'
         self.slayout = None
         self.seed = None
 

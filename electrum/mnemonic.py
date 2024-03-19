@@ -198,10 +198,9 @@ class Mnemonic(Logger):
             i = i*n + k
         return i
 
-    def make_seed(self, *, seed_type=None, num_bits=None) -> str:
+    def make_seed(self, *, seed_type='standard', num_bits=None) -> str:
         from .keystore import bip39_is_checksum_valid
-        if seed_type is None:
-            seed_type = 'segwit'
+
         if num_bits is None:
             num_bits = 132
         prefix = version.seed_prefix(seed_type)

@@ -15,7 +15,7 @@ Pane {
 
     padding: 0
 
-    property var _baseunits: ['DIME','mDIME','bits','sat']
+    property var _baseunits: ['DIME','mDIME']
 
     ColumnLayout {
         anchors.fill: parent

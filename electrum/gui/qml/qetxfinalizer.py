@@ -249,17 +249,20 @@ class TxFeeSlider(FeeSlider):
 
     def update_outputs_from_tx(self, tx):
         outputs = []
+        txid = tx.txid()
+        if txid is None:
+            return 
         for idx, o in enumerate(tx.outputs()):
-            outputs.append({
+            output_info = {
                 'address': o.get_ui_address_str(),
                 'value': o.value,
-                'short_id': str(TxOutpoint(bytes.fromhex(tx.txid()), idx).short_name()),
+                'short_id': str(TxOutpoint(bytes.fromhex(txid), idx).short_name()),
                 'is_mine': self._wallet.wallet.is_mine(o.get_ui_address_str()),
                 'is_change': self._wallet.wallet.is_change(o.get_ui_address_str()),
                 'is_billing': self._wallet.wallet.is_billing_address(o.get_ui_address_str())
-            })
+            }
+            outputs.append(output_info)
         self.outputs = outputs
-
 
 class QETxFinalizer(TxFeeSlider):
     _logger = get_logger(__name__)

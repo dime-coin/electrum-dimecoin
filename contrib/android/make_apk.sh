@@ -10,6 +10,9 @@ LOCALE="$PROJECT_ROOT"/electrum/locale/
 
 . "$CONTRIB"/build_tools_util.sh
 
+echo "PROJECT_ROOT: $PROJECT_ROOT"
+echo "PROJECT_ROOT_OR_FRESHCLONE_ROOT: $PROJECT_ROOT_OR_FRESHCLONE_ROOT"
+
 git -C "$PROJECT_ROOT" rev-parse 2>/dev/null || fail "Building outside a git clone is not supported."
 
 
@@ -34,6 +37,8 @@ info "preparing electrum-locale."
 )
 
 pushd "$CONTRIB_ANDROID"
+
+sudo chown -R user:user /home/user/wspace/electrum
 
 info "apk building phase starts."
 

@@ -3902,14 +3902,14 @@ class Wallet(object):
 
 
 def create_new_wallet(*, path, config: SimpleConfig, passphrase=None, password=None,
-                      encrypt_file=True, seed_type=None, gap_limit=None) -> dict:
+                      encrypt_file=True, seed_type='standard', segwit=False, gap_limit=None):
     """Create a new wallet"""
     storage = WalletStorage(path)
     if storage.file_exists():
         raise Exception("Remove the existing wallet first!")
     db = WalletDB('', storage=storage, upgrade=True)
-
-    seed = Mnemonic('en').make_seed(seed_type=seed_type)
+    seed_type ='segwit' if segwit else 'standard'
+    seed = Mnemonic('en').make_seed(seed_type='standard')
     k = keystore.from_seed(seed, passphrase)
     db.put('keystore', k.dump())
     db.put('wallet_type', 'standard')

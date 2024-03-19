@@ -32,8 +32,10 @@ CCY_PRECISIONS = {'BHD': 3, 'BIF': 0, 'BYR': 0, 'CLF': 4, 'CLP': 0,
                   'LYD': 3, 'MGA': 1, 'MRO': 1, 'OMR': 3, 'PYG': 0,
                   'RWF': 0, 'TND': 3, 'UGX': 0, 'UYI': 0, 'VND': 0,
                   'VUV': 0, 'XAF': 0, 'XAU': 4, 'XOF': 0, 'XPF': 0,
+                  'USD':8, 'AUD': 8,'JPY':8, 'EUR': 8, 'CAD':8,
+                  'CNY':8, 'ISK':8, 'GBP':8, 'BRL':8,
                   # Cryptocurrencies
-                  'BTC': 8, 'LTC': 8, 'XRP': 6, 'ETH': 18,
+                  'BTC': 8, 'DIME': 5, 'LTC': 8, 'XRP': 6, 'ETH': 18,
                   }
 
 SPOT_RATE_REFRESH_TARGET = 150      # approx. every 2.5 minutes, try to refresh spot price
@@ -343,9 +345,9 @@ class CoinDesk(ExchangeBase):
 class CoinGecko(ExchangeBase):
 
     async def get_rates(self, ccy):
-        json = await self.get_json('api.coingecko.com', '/api/v3/exchange_rates')
-        return dict([(ccy.upper(), to_decimal(d['value']))
-                     for ccy, d in json['rates'].items()])
+        json = await self.get_json('api.coingecko.com',
+                                   '/api/v3/simple/price?ids=dimecoin&vs_currencies=%s' % ccy)
+        return {ccy: Decimal(json['dimecoin'][ccy.lower()])}
 
     def history_ccys(self):
         # CoinGecko seems to have historical data for all ccys it supports
@@ -355,7 +357,7 @@ class CoinGecko(ExchangeBase):
         history = await self.get_json('api.coingecko.com',
                                       '/api/v3/coins/dimecoin/market_chart?vs_currency=%s&days=max' % ccy)
 
-        return dict([(timestamp_to_datetime(h[0]/1000, utc=True).strftime('%Y-%m-%d'), str(h[1]))
+        return dict([(datetime.utcfromtimestamp(h[0]/1000).strftime('%Y-%m-%d'), h[1])
                      for h in history['prices']])
 
 
@@ -690,7 +692,7 @@ class FxThread(ThreadJob, EventListener, NetworkRetryManager[str]):
         if rate.is_nan():
             return _("  (No FX rate available)")
         amount = 1000 if decimal_point == 0 else 1
-        value = self.value_str(amount * COIN / (10**(8 - decimal_point)), rate)
+        value = self.value_str(amount * COIN / (10**(5 - decimal_point)), rate)
         return " %d %s~%s %s" % (amount, base_unit, value, self.ccy)
 
     def fiat_value(self, satoshis, rate) -> Decimal:

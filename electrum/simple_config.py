@@ -27,13 +27,13 @@ FEE_DEPTH_TARGETS = [10_000_000, 5_000_000, 2_000_000, 1_000_000,
 FEE_LN_ETA_TARGET = 2  # note: make sure the network is asking for estimates for this target
 
 # satoshi per kbyte
-FEERATE_MAX_DYNAMIC = 1500000
-FEERATE_WARNING_HIGH_FEE = 600000
-FEERATE_FALLBACK_STATIC_FEE = 150000
-FEERATE_DEFAULT_RELAY = 1000
-FEERATE_MAX_RELAY = 50000
-FEERATE_STATIC_VALUES = [1000, 2000, 5000, 10000, 20000, 30000,
-                         50000, 70000, 100000, 150000, 200000, 300000]
+FEERATE_MAX_DYNAMIC = 100000
+FEERATE_WARNING_HIGH_FEE = 500000
+FEERATE_FALLBACK_STATIC_FEE = 20000
+FEERATE_DEFAULT_RELAY = 100
+FEERATE_MAX_RELAY = 20000
+FEERATE_STATIC_VALUES = [100, 150, 200, 500, 1000, 5000,
+                         10000, 20000]
 
 # The min feerate_per_kw that can be used in lightning so that
 # the resulting onchain tx pays the min relay fee.
@@ -369,7 +369,7 @@ class SimpleConfig(Logger):
         base_unit = self.user_config.get('base_unit')
         if isinstance(base_unit, str):
             self._set_key_in_user_config('base_unit', None)
-            map_ = {'btc':8, 'mbtc':5, 'ubtc':2, 'bits':2, 'sat':0}
+            map_ = {'dime':5, 'mdime':3, 'ubtc':2, 'bits':2, 'sat':0}
             decimal_point = map_.get(base_unit.lower())
             self._set_key_in_user_config('decimal_point', decimal_point)
 
@@ -782,7 +782,7 @@ class SimpleConfig(Logger):
             if value not in FEE_DEPTH_TARGETS:
                 raise Exception(f"Error: fee_level must be in {FEE_DEPTH_TARGETS}")
             self.FEE_EST_USE_MEMPOOL = True
-            self.FEE_EST_DYNAMIC = True
+            self.FEE_EST_DYNAMIC = False
             self.FEE_EST_DYNAMIC_MEMPOOL_SLIDERPOS = FEE_DEPTH_TARGETS.index(value)
         elif fee_method == 'ETA':
             if value not in FEE_ETA_TARGETS:
@@ -986,7 +986,7 @@ class SimpleConfig(Logger):
     )
 
     FX_USE_EXCHANGE_RATE = ConfigVar('use_exchange_rate', default=False, type_=bool)
-    FX_CURRENCY = ConfigVar('currency', default='EUR', type_=str)
+    FX_CURRENCY = ConfigVar('currency', default='USD', type_=str)
     FX_EXCHANGE = ConfigVar('use_exchange', default='CoinGecko', type_=str)  # default exchange should ideally provide historical rates
     FX_HISTORY_RATES = ConfigVar(
         'history_rates', default=False, type_=bool,
@@ -1169,7 +1169,7 @@ This will result in longer routes; it might increase your fees and decrease the 
     WALLET_BACKUP_DIRECTORY = ConfigVar('backup_dir', default=None, type_=str)
     CONFIG_PIN_CODE = ConfigVar('pin_code', default=None, type_=str)
     QR_READER_FLIP_X = ConfigVar('qrreader_flip_x', default=True, type_=bool)
-    WIZARD_DONT_CREATE_SEGWIT = ConfigVar('nosegwit', default=False, type_=bool)
+    WIZARD_DONT_CREATE_SEGWIT = ConfigVar('nosegwit', default=True, type_=bool)
     CONFIG_FORGET_CHANGES = ConfigVar('forget_config', default=False, type_=bool)
 
     # submarine swap server

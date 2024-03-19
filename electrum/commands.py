@@ -263,7 +263,7 @@ class Commands:
         return await self.daemon._stop_wallet(wallet_path)
 
     @command('')
-    async def create(self, passphrase=None, password=None, encrypt_file=True, seed_type=None, wallet_path=None):
+    async def create(self, passphrase=None, password=None, encrypt_file=True, seed_type='standard', wallet_path=None):
         """Create a new wallet.
         If you want to be prompted for an argument, type '?' or ':' (concealed)
         """
@@ -271,7 +271,7 @@ class Commands:
                               passphrase=passphrase,
                               password=password,
                               encrypt_file=encrypt_file,
-                              seed_type=seed_type,
+                              seed_type='standard',                              
                               config=self.config)
         return {
             'seed': d['seed'],
@@ -353,10 +353,10 @@ class Commands:
             cv.set(value)
 
     @command('')
-    async def make_seed(self, nbits=None, language=None, seed_type=None):
+    async def make_seed(self, nbits=None, language=None, seed_type='standard'):
         """Create a seed"""
         from .mnemonic import Mnemonic
-        s = Mnemonic(language).make_seed(seed_type=seed_type, num_bits=nbits)
+        s = Mnemonic(language).make_seed(seed_type='standard', num_bits=nbits)
         return s
 
     @command('n')
@@ -1435,7 +1435,7 @@ command_options = {
     'from_coins':  (None, "Source coins (must be in wallet; use sweep to spend from non-wallet address)."),
     'change_addr': ("-c", "Change address. Default is a spare address, or the source address if it's not in the wallet"),
     'nbits':       (None, "Number of bits of entropy"),
-    'seed_type':   (None, "The type of seed to create, e.g. 'standard' or 'segwit'"),
+    'seed_type':   ("-S", "The type of seed to create, e.g. 'standard' or 'segwit'"),
     'language':    ("-L", "Default language for wordlist"),
     'passphrase':  (None, "Seed extension"),
     'privkey':     (None, "Private key. Set to '?' to get a prompt."),
