@@ -7,6 +7,9 @@ assignees: ''
 
 ---
 
+**Important**
+For reporting any security vulnerabilities, please see the [Reporting Policy](https://github.com/dime-coin/electrum-dimecoin/security/policy) for further instructions.
+
 **Describe the bug**
 A clear and concise description of what the bug is.
 
