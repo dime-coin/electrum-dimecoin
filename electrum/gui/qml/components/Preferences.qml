@@ -386,6 +386,33 @@ Pane {
                             wrapMode: Text.Wrap
                         }
                     }
+
+                    RowLayout {
+                        Layout.columnSpan: 2
+                        Layout.fillWidth: true
+                        spacing: 0
+                        Switch {
+                            id: debugQmlBrowser
+                            onCheckedChanged: {
+                                if (activeFocus && checked) {
+                                    // Open QML File Browser when toggled on
+                                    var browser = qmlFileBrowser.createObject(app, {})
+                                    if (browser) {
+                                        browser.visible = true
+                                        // The toggle will be reset when browser is closed
+                                    } else {
+                                        // If browser creation fails, reset the toggle
+                                        checked = false
+                                    }
+                                }
+                            }
+                        }
+                        Label {
+                            Layout.fillWidth: true
+                            text: qsTr('Debug QML Browser (for developers)')
+                            wrapMode: Text.Wrap
+                        }
+                    }
                 }
 
             }
@@ -396,6 +423,20 @@ Pane {
     Component {
         id: pinSetup
         Pin {}
+    }
+
+    Component {
+        id: qmlFileBrowser
+        QmlFileBrowser {
+            width: parent.width * 0.9
+            height: parent.height * 0.8
+            anchors.centerIn: parent
+            onClosed: {
+                // Reset the toggle when browser is closed
+                debugQmlBrowser.checked = false
+                destroy()
+            }
+        }
     }
 
     Component.onCompleted: {

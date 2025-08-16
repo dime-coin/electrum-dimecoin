@@ -74,6 +74,7 @@ ElDialog {
                     color: Material.accentColor
                 }
 
+                // Address field - editable for manual entry, read-only for existing invoices
                 TextHighlightPane {
                     Layout.columnSpan: 2
                     Layout.fillWidth: true
@@ -82,16 +83,35 @@ ElDialog {
 
                     RowLayout {
                         width: parent.width
+                        
+                        // Show text field for manual entry when address is empty
+                        TextField {
+                            id: addressField
+                            Layout.fillWidth: true
+                            visible: !invoice.address || invoice.address === ''
+                            placeholderText: qsTr('Enter the address you want to send to')
+                            font.family: FixedFont
+                            onTextChanged: {
+                                if (text) {
+                                    invoice.address = text
+                                }
+                            }
+                        }
+                        
+                        // Show read-only label for existing invoices
                         Label {
+                            visible: invoice.address && invoice.address !== ''
                             text: invoice.address
                             font.pixelSize: constants.fontSizeLarge
                             font.family: FixedFont
                             Layout.fillWidth: true
                             wrapMode: Text.Wrap
                         }
+                        
                         ToolButton {
                             icon.source: '../../icons/share.png'
                             icon.color: 'transparent'
+                            visible: invoice.address && invoice.address !== ''
                             onClicked: {
                                 var dialog = app.genericShareDialog.createObject(app, {
                                     title: qsTr('Address'),
@@ -107,18 +127,33 @@ ElDialog {
                     Layout.columnSpan: 2
                     Layout.topMargin: constants.paddingSmall
                     text: qsTr('Description')
-                    visible: invoice.message
+                    visible: invoice.message || !invoice.address || invoice.address === ''
                     color: Material.accentColor
                 }
 
+                // Description field - editable for manual entry, read-only for existing invoices
                 TextHighlightPane {
                     Layout.columnSpan: 2
                     Layout.fillWidth: true
-
-                    visible: invoice.message
+                    visible: invoice.message || !invoice.address || invoice.address === ''
                     leftPadding: constants.paddingMedium
 
+                    // Show text field for manual entry when message is empty
+                    TextField {
+                        id: descriptionField
+                        Layout.fillWidth: true
+                        visible: !invoice.message || invoice.message === ''
+                        placeholderText: qsTr('Enter a description for this transaction')
+                        onTextChanged: {
+                            if (text) {
+                                invoice.message = text
+                            }
+                        }
+                    }
+                    
+                    // Show read-only label for existing invoices
                     Label {
+                        visible: invoice.message && invoice.message !== ''
                         text: invoice.message
                         width: parent.width
                         font.pixelSize: constants.fontSizeXLarge
@@ -239,8 +274,13 @@ ElDialog {
                                 visible: _canMax
                                 checked: false
                                 onCheckedChanged: {
-                                    if (activeFocus)
+                                    if (activeFocus) {
                                         invoice.amountOverride.isMax = checked
+                                        if (checked) {
+                                            // When Max is selected, set the amount to maximum available
+                                            invoice.amountOverride = MAX
+                                        }
+                                    }
                                 }
                             }
 
@@ -256,6 +296,29 @@ ElDialog {
                                 visible: Daemon.fx.enabled && !amountMax.checked
                                 text: Daemon.fx.fiatCurrency
                                 color: Material.accentColor
+                            }
+                            
+                            // USD equivalent toggle for Max amount
+                            Switch {
+                                id: usdEquivalentToggle
+                                Layout.fillWidth: true
+                                Layout.columnSpan: 2
+                                
+                                text: qsTr('USD Equivalent')
+                                visible: Daemon.fx.enabled && amountMax.checked
+                                checked: false
+                                onCheckedChanged: {
+                                    if (activeFocus && checked) {
+                                        // Convert max amount to USD equivalent
+                                        var maxSats = Daemon.currentWallet.totalBalance.satsInt
+                                        var usdAmount = Daemon.fx.satsToFiat(maxSats)
+                                        if (!isNaN(usdAmount) && usdAmount > 0) {
+                                            // Set amount to USD equivalent in sats
+                                            var usdSats = Daemon.fx.fiatToSats(usdAmount)
+                                            invoice.amountOverride = usdSats
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
@@ -437,7 +500,16 @@ ElDialog {
                 Layout.preferredWidth: 1
                 text: qsTr('Pay')
                 icon.source: '../../icons/confirmed.png'
-                enabled: invoice.invoiceType != Invoice.Invalid && invoice.canPay
+                enabled: {
+                    // For manual entry, require address and amount to be filled
+                    if (!invoice.address || invoice.address === '') {
+                        return false
+                    }
+                    if (invoice.amount.isEmpty && !amountMax.checked) {
+                        return false
+                    }
+                    return invoice.invoiceType != Invoice.Invalid && invoice.canPay
+                }
                 onClicked: {
                     if (invoice.amount.isEmpty) {
                         invoice.amountOverride = amountMax.checked ? MAX : Config.unitsToSats(amountBtc.text)
@@ -454,7 +526,8 @@ ElDialog {
     }
 
     Component.onCompleted: {
-        if (invoice.amount.isEmpty && !invoice.status == Invoice.Expired) {
+        // Enable edit mode for manual entry (when address is empty) or when amount is empty
+        if ((!invoice.address || invoice.address === '') || (invoice.amount.isEmpty && !invoice.status == Invoice.Expired)) {
             amountContainer.editmode = true
         } else if (invoice.amount.isMax) {
             amountMax.checked = true

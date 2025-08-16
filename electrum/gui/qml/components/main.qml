@@ -462,6 +462,22 @@ ApplicationWindow
         }
     }
 
+    property alias sendChoiceDialog: _sendChoiceDialog
+    Component {
+        id: _sendChoiceDialog
+        SendChoiceDialog {
+            onClosed: destroy()
+        }
+    }
+
+    property alias androidSendDialog: _androidSendDialog
+    Component {
+        id: _androidSendDialog
+        AndroidSendDialog {
+            onClosed: destroy()
+        }
+    }
+
     Component.onCompleted: {
         coverTimer.start()
 

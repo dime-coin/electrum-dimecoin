@@ -180,8 +180,8 @@ class BaseInvoice(StoredObject):
         amount_msat = self.amount_msat
         if amount_msat in [None, "!"]:
             return amount_msat
-        return int(amount_msat // 1000)
-
+        return amount_msat // 1000  # Convert millisatoshis to satoshis
+        
     def set_amount_msat(self, amount_msat: Union[int, str]) -> None:
         """The GUI uses this to fill the amount for a zero-amount invoice."""
         if amount_msat == "!":
@@ -189,7 +189,7 @@ class BaseInvoice(StoredObject):
         else:
             assert isinstance(amount_msat, int), f"{amount_msat=!r}"
             assert amount_msat >= 0, amount_msat
-            amount_sat = (amount_msat // 1000) + int(amount_msat % 1000 > 0)  # round up
+            amount_sat = amount_msat // 1000  # Convert millisatoshis to satoshis
         if outputs := self.outputs:
             assert len(self.outputs) == 1, len(self.outputs)
             self.outputs = [PartialTxOutput(scriptpubkey=outputs[0].scriptpubkey, value=amount_sat)]

@@ -41,30 +41,111 @@ Item {
             return
         }
 
-        // Android based send dialog if on android
-        var scanner = app.scanDialog.createObject(mainView, {
-            hint: qsTr('Scan an Invoice, an Address, an LNURL-pay, a PSBT or a Channel backup'),
+        // Android: provide choice between QR scan and manual entry
+        var choiceDialog = sendChoiceDialog.createObject(mainView)
+        choiceDialog.scanQrClicked.connect(function() {
+            // User chose QR scan - open QR scanner
+            var scanner = app.scanDialog.createObject(mainView, {
+                hint: qsTr('Scan an Invoice, an Address, an LNURL-pay, a PSBT or a Channel backup'),
+            })
+            scanner.onFound.connect(function() {
+                var data = scanner.scanData
+                data = data.trim()
+                if (bitcoin.isRawTx(data)) {
+                    app.stack.push(Qt.resolvedUrl('TxDetails.qml'), { rawtx: data })
+                } else if (Daemon.currentWallet.isValidChannelBackup(data)) {
+                    var dialog = app.messageDialog.createObject(app, {
+                        title: qsTr('Import Channel backup?'),
+                        yesno: true
+                    })
+                    dialog.accepted.connect(function() {
+                        Daemon.currentWallet.importChannelBackup(data)
+                    })
+                    dialog.open()
+                } else {
+                    // Set the recipient and navigate to invoice dialog
+                    invoiceParser.recipient = data
+                    // Close the scanner dialog
+                    scanner.close()
+                }
+            })
+            scanner.open()
         })
-        scanner.onFound.connect(function() {
-            var data = scanner.scanData
-            data = data.trim()
-            if (bitcoin.isRawTx(data)) {
-                app.stack.push(Qt.resolvedUrl('TxDetails.qml'), { rawtx: data })
-            } else if (Daemon.currentWallet.isValidChannelBackup(data)) {
-                var dialog = app.messageDialog.createObject(app, {
-                    title: qsTr('Import Channel backup?'),
-                    yesno: true
+        
+        choiceDialog.manualEntryClicked.connect(function() {
+            // User chose manual entry - open the Android send dialog
+            console.log("Manual entry clicked!")
+            
+            var dialog = app.androidSendDialog.createObject(mainView)
+            
+            if (dialog) {
+                dialog.doPay.connect(function(address, amount, message) {
+                    console.log("doPay signal received from AndroidSendDialog")
+                    console.log("Address:", address, "Amount:", amount, "Message:", message)
+                    
+                    // Create transaction outputs directly and call payment function
+                    try {
+                        console.log("Starting direct payment creation...")
+                        console.log("Address:", address)
+                        console.log("Amount:", amount)
+                        console.log("Message:", message)
+                        
+                        // Validate address
+                        if (!bitcoin.isAddress(address)) {
+                            throw new Error("Invalid address")
+                        }
+                        
+                        // Convert amount to satoshis
+                        var amountSats = Config.unitsToSats(amount)
+                        if (amountSats.satsInt <= 0) {
+                            throw new Error("Invalid amount")
+                        }
+                        
+                        console.log("Valid address and amount, creating payment dialog...")
+                        
+                        // Create payment confirmation dialog directly
+                        var paymentDialog = confirmPaymentDialog.createObject(mainView, {
+                            address: address,
+                            satoshis: amountSats,
+                            message: message || ''
+                        })
+                        
+                        var canComplete = !Daemon.currentWallet.isWatchOnly && Daemon.currentWallet.canSignWithoutCosigner
+                        paymentDialog.accepted.connect(function() {
+                            if (!canComplete) {
+                                if (Daemon.currentWallet.isWatchOnly) {
+                                    paymentDialog.finalizer.saveOrShow()
+                                } else {
+                                    paymentDialog.finalizer.sign()
+                                }
+                            } else {
+                                paymentDialog.finalizer.signAndSend()
+                            }
+                        })
+                        
+                        paymentDialog.open()
+                        dialog.close()
+                        
+                    } catch (e) {
+                        console.log("Error creating payment:", e)
+                        console.log("Error message:", e.message)
+                        var errorDialog = app.messageDialog.createObject(mainView, {
+                            title: qsTr('Error'),
+                            iconSource: Qt.resolvedUrl('../../icons/warning.png'),
+                            text: qsTr('Invalid address or amount')
+                        })
+                        errorDialog.open()
+                    }
                 })
-                dialog.accepted.connect(function() {
-                    Daemon.currentWallet.importChannelBackup(data)
-                })
+                
                 dialog.open()
+                console.log("AndroidSendDialog opened successfully")
             } else {
-                invoiceParser.recipient = data
+                console.log("Failed to create AndroidSendDialog")
             }
-            //scanner.destroy()  // TODO
         })
-        scanner.open()
+        
+        choiceDialog.open()
     }
 
     function closeSendDialog() {
@@ -354,6 +435,7 @@ Item {
         }
         onValidationSuccess: {
             closeSendDialog()
+            // Open InvoiceDialog for QR code scanning results
             var dialog = invoiceDialog.createObject(app, {
                 invoice: invoiceParser,
                 payImmediately: invoiceParser.isLnurlPay
@@ -621,6 +703,17 @@ Item {
     Component {
         id: exportTxDialog
         ExportTxDialog {
+            onClosed: destroy()
+        }
+    }
+
+    // androidSendDialog component is defined in main.qml
+
+    Component {
+        id: sendChoiceDialog
+        SendChoiceDialog {
+            width: parent.width * 0.9
+            anchors.centerIn: parent
             onClosed: destroy()
         }
     }
