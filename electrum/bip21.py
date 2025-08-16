@@ -108,7 +108,7 @@ def create_bip21_uri(addr, amount_sat: Optional[int], message: Optional[str],
         extra_query_params = {}
     query = []
     if amount_sat:
-        query.append('amount=%s' % format_satoshis_plain(amount_sat))
+        query.append('amount=%s' % format_satoshis_plain(amount_sat, decimal_point=5))
     if message:
         query.append('message=%s' % urllib.parse.quote(message))
     for k, v in extra_query_params.items():
